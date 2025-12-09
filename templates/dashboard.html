@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Palace Booking</title>
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/css/tabler.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://rsms.me/inter/inter.css');
+
+        :root {
+            --palace-bg: rgb(234, 211, 171);
+            --palace-nav-bg: rgb(26, 32, 44);
+            --palace-nav-text: rgb(234, 211, 171);
+            --palace-primary: rgb(26, 32, 44);
+            --palace-primary-hover: rgb(45, 55, 72);
+            --palace-accent: rgb(203, 166, 104);
+            --tblr-font-sans-serif: 'Inter Var', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+        }
+
+        body {
+            font-family: 'Inter Var', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+            font-feature-settings: "cv03", "cv04", "cv11";
+            background-color: var(--palace-bg);
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .navbar-vertical {
+            background-color: var(--palace-nav-bg) !important;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
+        }
+
+        .navbar-vertical .navbar-brand {
+            padding: 1rem 0 !important;
+            margin: 0 2rem !important;
+            border-bottom: 1px solid var(--palace-primary-hover);
+        }
+
+        .navbar-vertical .navbar-brand img,
+        .navbar-logo {
+            width: auto !important;
+            height: 2rem !important;
+            max-width: 100% !important;
+        }
+
+        .navbar-vertical .navbar-brand span {
+            color: var(--palace-nav-text) !important;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .navbar-vertical .navbar-nav {
+            padding: 0.5rem;
+        }
+
+        .navbar-vertical .nav-item {
+            margin: 0.125rem 0;
+        }
+
+        .navbar-vertical .nav-link {
+            color: var(--palace-nav-text) !important;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-vertical .nav-link:hover {
+            background-color: var(--palace-primary-hover) !important;
+        }
+
+        .navbar-vertical .nav-link.active {
+            background-color: var(--palace-accent) !important;
+            color: var(--palace-primary) !important;
+        }
+
+        .navbar-vertical .nav-link.active .nav-link-icon {
+            color: var(--palace-primary) !important;
+        }
+
+        .navbar-vertical .nav-link-icon {
+            margin-right: 0.5rem;
+            width: 1.5rem;
+            text-align: center;
+            color: var(--palace-nav-text);
+            opacity: 0.8;
+        }
+
+        .navbar-vertical .nav-link-title {
+            font-size: 0.875rem;
+        }
+
+        /* Main content */
+        .page-wrapper {
+            margin-left: 250px;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .dashboard-header {
+            background: var(--palace-primary);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            color: var(--palace-nav-text);
+        }
+
+        .dashboard-header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-header p {
+            opacity: 0.9;
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .date-filter-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(26, 32, 44, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .date-filter-card label {
+            font-weight: 600;
+            color: var(--palace-primary);
+            margin: 0;
+        }
+
+        .date-filter-card input[type="date"] {
+            padding: 0.5rem 1rem;
+            border: 1px solid rgba(26, 32, 44, 0.2);
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+
+        .btn-apply {
+            padding: 0.5rem 1.5rem;
+            background: var(--palace-primary);
+            color: var(--palace-nav-text);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-apply:hover {
+            background: var(--palace-primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .quick-filters {
+            display: flex;
+            gap: 0.5rem;
+            margin-left: auto;
+        }
+
+        .quick-filter-btn {
+            padding: 0.4rem 1rem;
+            background: rgba(26, 32, 44, 0.05);
+            color: var(--palace-primary);
+            border: 1px solid rgba(26, 32, 44, 0.2);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-filter-btn:hover, .quick-filter-btn.active {
+            background: var(--palace-primary);
+            color: var(--palace-nav-text);
+            border-color: var(--palace-primary);
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(26, 32, 44, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--palace-primary);
+        }
+
+        .summary-card.accent::before { background: var(--palace-accent); }
+        .summary-card.success::before { background: #10b981; }
+        .summary-card.info::before { background: #3b82f6; }
+
+        .summary-card h3 {
+            font-size: 0.85rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .summary-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--palace-primary);
+        }
+
+        .summary-card .subvalue {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
+        .charts-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(26, 32, 44, 0.1);
+        }
+
+        .chart-card h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--palace-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chart-card h2 i {
+            color: var(--palace-accent);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .space-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .space-stat {
+            background: rgba(26, 32, 44, 0.03);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid rgba(26, 32, 44, 0.1);
+        }
+
+        .space-stat .name {
+            font-weight: 600;
+            color: var(--palace-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .space-stat .utilization {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--palace-primary);
+        }
+
+        .space-stat.palace1 .utilization { color: var(--palace-primary); }
+        .space-stat.palace2 .utilization { color: var(--palace-accent); }
+
+        .space-stat .details {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
+        .modality-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .modality-table th, .modality-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(26, 32, 44, 0.1);
+        }
+
+        .modality-table th {
+            font-size: 0.8rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            font-weight: 600;
+            background: rgba(26, 32, 44, 0.03);
+        }
+
+        .modality-table td {
+            font-size: 0.95rem;
+            color: var(--palace-primary);
+        }
+
+        .modality-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .modality-badge.strength { background: #fef3c7; color: #92400e; }
+        .modality-badge.pilates { background: #dbeafe; color: #1e40af; }
+        .modality-badge.yoga { background: #d1fae5; color: #065f46; }
+        .modality-badge.physiotherapy { background: #fce7f3; color: #9d174d; }
+        .modality-badge.hyrox { background: #e0e7ff; color: #3730a3; }
+
+        .progress-bar-custom {
+            background: rgba(26, 32, 44, 0.1);
+            border-radius: 4px;
+            height: 8px;
+            overflow: hidden;
+            width: 80px;
+        }
+
+        .progress-bar-custom .fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .revenue-pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .revenue-pagination button {
+            padding: 0.5rem 1rem;
+            background: rgba(26, 32, 44, 0.05);
+            border: 1px solid rgba(26, 32, 44, 0.2);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--palace-primary);
+        }
+
+        .revenue-pagination button:hover:not(:disabled) {
+            background: var(--palace-primary);
+            color: var(--palace-nav-text);
+        }
+
+        .revenue-pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .revenue-pagination span {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        @media (max-width: 992px) {
+            .navbar-vertical {
+                width: 100% !important;
+                min-width: 100% !important;
+                max-width: 100% !important;
+                position: relative !important;
+                height: auto !important;
+                transform: none !important;
+            }
+            .navbar-vertical .container-fluid {
+                width: 100% !important;
+            }
+            .navbar-vertical .navbar-collapse {
+                width: 100% !important;
+            }
+            .navbar-vertical .navbar-nav {
+                width: 100% !important;
+            }
+            .page-wrapper {
+                margin-left: 0 !important;
+            }
+            .navbar-vertical .navbar-brand {
+                margin: 0 1rem !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+            .quick-filters {
+                margin-left: 0;
+                width: 100%;
+                margin-top: 1rem;
+            }
+            .date-filter-card {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="navbar navbar-vertical navbar-expand-lg" data-bs-theme="dark">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar-menu" aria-expanded="false">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <h1 class="navbar-brand navbar-brand-autodark">
+                <a href="/admin/dashboard" class="brand-link">
+                    <img src="/admin/statics/images/desktopLogo.svg" alt="Palace Booking" class="navbar-logo" style="height: 2rem; width: auto;">
+                </a>
+            </h1>
+            <div class="collapse navbar-collapse" id="sidebar-menu">
+                <ul class="navbar-nav pt-lg-3">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/admin/dashboard">
+                            <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                <i class="fa-solid fa-chart-line"></i>
+                            </span>
+                            <span class="nav-link-title">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/booking/list">
+                            <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                <i class="fa-solid fa-calendar-check"></i>
+                            </span>
+                            <span class="nav-link-title">Bookings</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="page-wrapper">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <h1><i class="fa fa-chart-line me-2"></i>Dashboard</h1>
+            <p>Business performance overview and analytics</p>
+        </div>
+
+        <!-- Date Filter -->
+        <div class="date-filter-card">
+            <label><i class="fa fa-calendar me-2"></i>Date Range:</label>
+            <input type="date" id="startDate" value="">
+            <span>to</span>
+            <input type="date" id="endDate" value="">
+            <button class="btn-apply" onclick="applyDateFilter()">
+                <i class="fa fa-filter me-1"></i>Apply
+            </button>
+            <div class="quick-filters">
+                <button class="quick-filter-btn" onclick="setQuickFilter(7)">Last 7 Days</button>
+                <button class="quick-filter-btn" onclick="setQuickFilter(14)">Last 14 Days</button>
+                <button class="quick-filter-btn" onclick="setQuickFilter(30)">Last 30 Days</button>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+            <div class="summary-card">
+                <h3>Total Revenue</h3>
+                <div class="value" id="totalRevenue">HKD 0</div>
+                <div class="subvalue" id="avgDailyRevenue">Avg: HKD 0/day</div>
+            </div>
+            <div class="summary-card accent">
+                <h3>Total Bookings</h3>
+                <div class="value" id="totalBookings">0</div>
+                <div class="subvalue" id="avgDailyBookings">Avg: 0/day</div>
+            </div>
+            <div class="summary-card success">
+                <h3>Total Hours</h3>
+                <div class="value" id="totalHours">0</div>
+                <div class="subvalue">booked hours</div>
+            </div>
+            <div class="summary-card info">
+                <h3>Date Range</h3>
+                <div class="value" id="daysCount">0</div>
+                <div class="subvalue" id="dateRangeText">days</div>
+            </div>
+        </div>
+
+        <!-- Charts Row 1 -->
+        <div class="charts-row">
+            <!-- Space Utilization -->
+            <div class="chart-card">
+                <h2><i class="fa fa-building"></i>Space Utilization Rate</h2>
+                <div class="chart-container">
+                    <canvas id="spaceChart"></canvas>
+                </div>
+                <div class="space-stats">
+                    <div class="space-stat palace1">
+                        <div class="name">🏛️ Palace 1</div>
+                        <div class="utilization" id="palace1Util">0%</div>
+                        <div class="details" id="palace1Details">0 bookings • 0 hrs</div>
+                    </div>
+                    <div class="space-stat palace2">
+                        <div class="name">🏛️ Palace 2</div>
+                        <div class="utilization" id="palace2Util">0%</div>
+                        <div class="details" id="palace2Details">0 bookings • 0 hrs</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daily Revenue -->
+            <div class="chart-card">
+                <h2><i class="fa fa-dollar-sign"></i>Daily Revenue</h2>
+                <div class="chart-container">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+                <div class="revenue-pagination">
+                    <button id="prevPage" onclick="changePage(-1)"><i class="fa fa-chevron-left"></i></button>
+                    <span id="pageInfo">Page 1 of 1</span>
+                    <button id="nextPage" onclick="changePage(1)"><i class="fa fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row 2 -->
+        <div class="charts-row">
+            <!-- Modality Utilization -->
+            <div class="chart-card">
+                <h2><i class="fa fa-chart-pie"></i>Modality Booking Performance</h2>
+                <div class="chart-container">
+                    <canvas id="modalityChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Revenue Distribution -->
+            <div class="chart-card">
+                <h2><i class="fa fa-coins"></i>Revenue Distribution by Modality</h2>
+                <div class="chart-container">
+                    <canvas id="revenueDistChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modality Performance Table -->
+        <div class="chart-card">
+            <h2><i class="fa fa-table"></i>Modality Performance Details</h2>
+            <div class="table-responsive">
+                <table class="modality-table">
+                    <thead>
+                        <tr>
+                            <th>Modality</th>
+                            <th>Bookings</th>
+                            <th>Hours</th>
+                            <th>Revenue (HKD)</th>
+                            <th>Utilization</th>
+                            <th>Revenue Share</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalityTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/js/tabler.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <script>
+        // Dashboard data
+        let dashboardData = null;
+        let currentPage = 0;
+        const itemsPerPage = 7;
+
+        // Color palette
+        const colors = {
+            primary: 'rgb(26, 32, 44)',
+            accent: 'rgb(203, 166, 104)',
+            success: '#10b981',
+            info: '#3b82f6',
+            warning: '#f59e0b'
+        };
+
+        const modalityColors = {
+            'Strength': '#f59e0b',
+            'Pilates': '#3b82f6',
+            'Yoga': '#10b981',
+            'Physiotherapy': '#ec4899',
+            'Hyrox': 'rgb(26, 32, 44)'
+        };
+
+        // Charts
+        let spaceChart, revenueChart, modalityChart, revenueDistChart;
+
+        // Set default dates
+        function setDefaultDates() {
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setDate(endDate.getDate() - 6);
+            
+            document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
+            document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setDefaultDates();
+            initCharts();
+            fetchDashboardData(
+                document.getElementById('startDate').value,
+                document.getElementById('endDate').value
+            );
+        });
+
+        function initCharts() {
+            // Space Utilization Chart
+            const spaceCtx = document.getElementById('spaceChart').getContext('2d');
+            spaceChart = new Chart(spaceCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Palace 1', 'Palace 2'],
+                    datasets: [{
+                        label: 'Utilization %',
+                        data: [0, 0],
+                        backgroundColor: [colors.primary, colors.accent],
+                        borderRadius: 8,
+                        barThickness: 60
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: value => value + '%'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Daily Revenue Chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            revenueChart = new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Revenue (HKD)',
+                        data: [],
+                        borderColor: colors.primary,
+                        backgroundColor: 'rgba(26, 32, 44, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 6,
+                        pointBackgroundColor: colors.primary
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: value => 'HKD ' + value.toLocaleString()
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Modality Chart (Doughnut)
+            const modalityCtx = document.getElementById('modalityChart').getContext('2d');
+            modalityChart = new Chart(modalityCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: Object.values(modalityColors),
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: { padding: 15 }
+                        }
+                    }
+                }
+            });
+
+            // Revenue Distribution Chart
+            const revenueDistCtx = document.getElementById('revenueDistChart').getContext('2d');
+            revenueDistChart = new Chart(revenueDistCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Revenue (HKD)',
+                        data: [],
+                        backgroundColor: Object.values(modalityColors),
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                callback: value => 'HKD ' + value.toLocaleString()
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateDashboard(data) {
+            dashboardData = data;
+            
+            // Update summary cards
+            document.getElementById('totalRevenue').textContent = 'HKD ' + data.summary.total_revenue.toLocaleString();
+            document.getElementById('avgDailyRevenue').textContent = 'Avg: HKD ' + data.summary.avg_daily_revenue.toLocaleString() + '/day';
+            document.getElementById('totalBookings').textContent = data.summary.total_bookings.toLocaleString();
+            document.getElementById('avgDailyBookings').textContent = 'Avg: ' + data.summary.avg_daily_bookings + '/day';
+            document.getElementById('totalHours').textContent = data.summary.total_hours;
+            document.getElementById('daysCount').textContent = data.date_range.days;
+            document.getElementById('dateRangeText').textContent = `${data.date_range.start} to ${data.date_range.end}`;
+
+            // Update space utilization
+            const space1 = data.space_utilization['Palace 1'];
+            const space2 = data.space_utilization['Palace 2'];
+            
+            spaceChart.data.datasets[0].data = [space1.utilization, space2.utilization];
+            spaceChart.update();
+
+            document.getElementById('palace1Util').textContent = space1.utilization + '%';
+            document.getElementById('palace1Details').textContent = `${space1.total_bookings} bookings • ${space1.booked_hours} hrs`;
+            document.getElementById('palace2Util').textContent = space2.utilization + '%';
+            document.getElementById('palace2Details').textContent = `${space2.total_bookings} bookings • ${space2.booked_hours} hrs`;
+
+            // Update daily revenue with pagination
+            currentPage = 0;
+            updateRevenueChart();
+
+            // Update modality charts
+            const modalities = Object.keys(data.modality_performance);
+            const modalityData = modalities.map(m => data.modality_performance[m]);
+
+            modalityChart.data.labels = modalities;
+            modalityChart.data.datasets[0].data = modalityData.map(d => d.utilization);
+            modalityChart.update();
+
+            revenueDistChart.data.labels = modalities;
+            revenueDistChart.data.datasets[0].data = modalityData.map(d => d.revenue);
+            revenueDistChart.update();
+
+            // Update modality table
+            updateModalityTable(data.modality_performance);
+        }
+
+        function updateRevenueChart() {
+            if (!dashboardData) return;
+            
+            const allData = dashboardData.daily_revenue;
+            const totalPages = Math.ceil(allData.length / itemsPerPage);
+            
+            const startIdx = currentPage * itemsPerPage;
+            const endIdx = Math.min(startIdx + itemsPerPage, allData.length);
+            const pageData = allData.slice(startIdx, endIdx);
+
+            revenueChart.data.labels = pageData.map(d => `${d.day}\n${d.date.slice(5)}`);
+            revenueChart.data.datasets[0].data = pageData.map(d => d.revenue);
+            revenueChart.update();
+
+            // Update pagination controls
+            document.getElementById('pageInfo').textContent = `Page ${currentPage + 1} of ${totalPages}`;
+            document.getElementById('prevPage').disabled = currentPage === 0;
+            document.getElementById('nextPage').disabled = currentPage >= totalPages - 1;
+        }
+
+        function changePage(delta) {
+            if (!dashboardData) return;
+            const totalPages = Math.ceil(dashboardData.daily_revenue.length / itemsPerPage);
+            currentPage = Math.max(0, Math.min(currentPage + delta, totalPages - 1));
+            updateRevenueChart();
+        }
+
+        function updateModalityTable(modalityData) {
+            const tbody = document.getElementById('modalityTableBody');
+            tbody.innerHTML = '';
+
+            for (const [modality, data] of Object.entries(modalityData)) {
+                const row = document.createElement('tr');
+                const badgeClass = modality.toLowerCase().replace(' ', '');
+                
+                row.innerHTML = `
+                    <td><span class="modality-badge ${badgeClass}">${modality}</span></td>
+                    <td>${data.bookings}</td>
+                    <td>${data.hours}</td>
+                    <td>HKD ${data.revenue.toLocaleString()}</td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="progress-bar-custom">
+                                <div class="fill" style="width: ${data.utilization}%; background: ${modalityColors[modality]};"></div>
+                            </div>
+                            <span>${data.utilization}%</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="progress-bar-custom">
+                                <div class="fill" style="width: ${data.revenue_share}%; background: ${modalityColors[modality]};"></div>
+                            </div>
+                            <span>${data.revenue_share}%</span>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            }
+        }
+
+        function applyDateFilter() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            if (startDate && endDate) {
+                fetchDashboardData(startDate, endDate);
+            }
+        }
+
+        function setQuickFilter(days) {
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setDate(endDate.getDate() - days + 1);
+
+            document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
+            document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
+            
+            fetchDashboardData(
+                document.getElementById('startDate').value,
+                document.getElementById('endDate').value
+            );
+        }
+
+        async function fetchDashboardData(startDate, endDate) {
+            try {
+                const response = await fetch(`/api/dashboard?start_date=${startDate}&end_date=${endDate}`);
+                const data = await response.json();
+                updateDashboard(data);
+            } catch (error) {
+                console.error('Failed to fetch dashboard data:', error);
+            }
+        }
+    </script>
+</body>
+</html>

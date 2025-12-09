@@ -1,0 +1,304 @@
+/* Palace Booking - Custom Theme */
+/* Color Scheme:
+   - Background: rgb(234, 211, 171) - Warm beige
+   - Left Nav Background: rgb(26, 32, 44) - Dark navy
+   - Left Nav Text: rgb(234, 211, 171) - Warm beige
+   - Primary Color: rgb(26, 32, 44) - Dark navy
+*/
+
+:root {
+    --palace-bg: rgb(234, 211, 171) !important;
+    --palace-nav-bg: rgb(26, 32, 44) !important;
+    --palace-nav-text: rgb(234, 211, 171) !important;
+    --palace-primary: rgb(26, 32, 44) !important;
+    --palace-primary-hover: rgb(45, 55, 72) !important;
+    --palace-accent: rgb(203, 166, 104) !important;
+    --tblr-body-bg: rgb(234, 211, 171) !important;
+    --tblr-bg-surface: rgb(234, 211, 171) !important;
+}
+
+/* Page Background */
+body,
+.page-wrapper,
+.page-body,
+html {
+    background-color: rgb(234, 211, 171) !important;
+}
+
+/* Left Navigation Sidebar */
+.navbar-vertical,
+.navbar-vertical.navbar-expand-lg,
+aside.navbar {
+    background-color: rgb(26, 32, 44) !important;
+}
+
+.navbar-vertical .navbar-nav .nav-link,
+aside.navbar .nav-link {
+    color: rgb(234, 211, 171) !important;
+}
+
+.navbar-vertical .navbar-nav .nav-link:hover,
+aside.navbar .nav-link:hover {
+    background-color: rgb(45, 55, 72) !important;
+    color: rgb(234, 211, 171) !important;
+}
+
+.navbar-vertical .navbar-nav .nav-link.active,
+aside.navbar .nav-link.active {
+    background-color: rgb(203, 166, 104) !important;
+    color: rgb(26, 32, 44) !important;
+}
+
+.navbar-vertical .navbar-brand,
+aside.navbar .navbar-brand {
+    color: rgb(234, 211, 171) !important;
+}
+
+.navbar-vertical .navbar-brand-autodark {
+    filter: none !important;
+}
+
+/* Navbar brand text */
+.navbar-brand .navbar-brand-image + span,
+.navbar-brand span,
+.navbar-brand-container .navbar-brand {
+    color: rgb(234, 211, 171) !important;
+}
+
+/* Dropdown menus in sidebar */
+.navbar-vertical .dropdown-menu,
+.dropdown-menu-arrow {
+    background-color: rgb(26, 32, 44) !important;
+}
+
+.navbar-vertical .dropdown-item,
+.dropdown-menu-arrow .dropdown-item {
+    color: rgb(234, 211, 171) !important;
+}
+
+.navbar-vertical .dropdown-item:hover,
+.dropdown-menu-arrow .dropdown-item:hover {
+    background-color: rgb(45, 55, 72) !important;
+}
+
+/* Top Header */
+.navbar.navbar-expand-md,
+.page-header,
+header.navbar {
+    background-color: rgb(26, 32, 44) !important;
+    border-color: rgb(45, 55, 72) !important;
+}
+
+.page-header .page-title,
+.page-title {
+    color: rgb(234, 211, 171) !important;
+}
+
+/* Primary Buttons */
+.btn-primary {
+    background-color: rgb(26, 32, 44) !important;
+    border-color: rgb(26, 32, 44) !important;
+    color: rgb(234, 211, 171) !important;
+}
+
+.btn-primary:hover {
+    background-color: rgb(45, 55, 72) !important;
+    border-color: rgb(45, 55, 72) !important;
+}
+
+/* Secondary buttons */
+.btn-secondary,
+.btn-outline-secondary {
+    border-color: rgb(26, 32, 44) !important;
+    color: rgb(26, 32, 44) !important;
+}
+
+.btn-outline-secondary:hover {
+    background-color: rgb(26, 32, 44) !important;
+    color: rgb(234, 211, 171) !important;
+}
+
+/* Cards */
+.card {
+    background-color: #fff;
+    border: 1px solid rgba(26, 32, 44, 0.1);
+    box-shadow: 0 1px 3px rgba(26, 32, 44, 0.1);
+}
+
+.card-header {
+    background-color: rgba(26, 32, 44, 0.03);
+    border-bottom: 1px solid rgba(26, 32, 44, 0.1);
+}
+
+/* Tables */
+.table thead th,
+table thead th {
+    background-color: rgb(26, 32, 44) !important;
+    color: rgb(234, 211, 171) !important;
+    border-color: rgb(45, 55, 72) !important;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(234, 211, 171, 0.3);
+}
+
+/* DataTables specific */
+table.dataTable thead th,
+table.dataTable thead td {
+    background-color: rgb(26, 32, 44) !important;
+    color: rgb(234, 211, 171) !important;
+}
+
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter,
+.dataTables_wrapper .dataTables_info {
+    color: rgb(26, 32, 44) !important;
+}
+
+/* Links */
+a {
+    color: rgb(26, 32, 44);
+}
+
+a:hover {
+    color: rgb(45, 55, 72);
+}
+
+/* Pagination */
+.page-link {
+    color: rgb(26, 32, 44);
+    border-color: rgba(26, 32, 44, 0.2);
+}
+
+.page-item.active .page-link {
+    background-color: rgb(26, 32, 44);
+    border-color: rgb(26, 32, 44);
+    color: rgb(234, 211, 171);
+}
+
+.page-link:hover {
+    background-color: rgba(26, 32, 44, 0.1);
+    color: rgb(26, 32, 44);
+}
+
+/* Form Elements */
+.form-control:focus,
+.form-select:focus {
+    border-color: rgb(26, 32, 44);
+    box-shadow: 0 0 0 0.25rem rgba(26, 32, 44, 0.25);
+}
+
+/* DataTables Pagination */
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    background: rgb(26, 32, 44) !important;
+    border-color: rgb(26, 32, 44) !important;
+    color: rgb(234, 211, 171) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: rgb(45, 55, 72) !important;
+    border-color: rgb(45, 55, 72) !important;
+    color: rgb(234, 211, 171) !important;
+}
+
+/* Badges */
+.badge.bg-primary {
+    background-color: rgb(26, 32, 44) !important;
+}
+
+/* Nav tabs */
+.nav-tabs .nav-link.active {
+    border-color: rgb(26, 32, 44);
+    color: rgb(26, 32, 44);
+}
+
+/* Alert/Success colors */
+.alert-primary {
+    background-color: rgba(26, 32, 44, 0.1);
+    border-color: rgb(26, 32, 44);
+    color: rgb(26, 32, 44);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgb(234, 211, 171);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgb(26, 32, 44);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(45, 55, 72);
+}
+
+/* Icons in nav */
+.navbar-vertical .nav-link .nav-link-icon,
+.nav-link-icon {
+    color: rgb(234, 211, 171) !important;
+    opacity: 0.8;
+}
+
+.navbar-vertical .nav-link:hover .nav-link-icon,
+.navbar-vertical .nav-link.active .nav-link-icon {
+    opacity: 1;
+}
+
+/* Logo area */
+.navbar-brand-container {
+    border-bottom: 1px solid rgb(45, 55, 72);
+}
+
+/* Dropdown caret */
+.navbar-vertical .nav-link .dropdown-toggle::after {
+    border-color: rgb(234, 211, 171);
+}
+
+/* Footer */
+footer,
+.footer {
+    background-color: rgb(234, 211, 171) !important;
+    border-color: rgba(26, 32, 44, 0.1) !important;
+}
+
+/* Select2 dropdown styling */
+.select2-container--default .select2-selection--single,
+.select2-container--default .select2-selection--multiple {
+    border-color: rgba(26, 32, 44, 0.2);
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: rgb(26, 32, 44);
+}
+
+/* Flatpickr */
+.flatpickr-day.selected {
+    background-color: rgb(26, 32, 44) !important;
+    border-color: rgb(26, 32, 44) !important;
+}
+
+/* Loading spinner */
+.spinner-border {
+    color: rgb(26, 32, 44) !important;
+}
+
+/* Empty state */
+.empty-title {
+    color: rgb(26, 32, 44);
+}
+
+/* Breadcrumbs */
+.breadcrumb-item a {
+    color: rgb(26, 32, 44);
+}
+
+.breadcrumb-item.active {
+    color: rgb(45, 55, 72);
+}

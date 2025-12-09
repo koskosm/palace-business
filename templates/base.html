@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="{{ get_locale() }}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+    {% if favicon_url %}
+        <link rel="icon" type="image/x-icon" href="{{ favicon_url }}"/>
+    {% endif %}
+    {% block head_meta %}{% endblock %}
+    {% block title %}<title>{{ title or app_title }}</title>{% endblock %}
+    <link rel="stylesheet" href="{{ url_for(__name__ ~ ':statics', path='css/tabler.min-1.1.0.css') }}">
+    <link rel="stylesheet" href="{{ url_for(__name__ ~ ':statics', path='css/fontawesome.min.css') }}">
+    <style>
+        @import url('https://rsms.me/inter/inter.css');
+
+        :root {
+            --tblr-font-sans-serif: 'Inter Var', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+        }
+
+        body {
+            font-feature-settings: "cv03", "cv04", "cv11";
+        }
+
+        .navbar-logo,
+        .navbar-brand-image,
+        .navbar-vertical .navbar-brand img {
+            width: auto !important;
+            height: 2rem !important;
+            max-width: 100% !important;
+        }
+    </style>
+    <!-- Palace Booking Custom Theme -->
+    <style>
+        :root {
+            --tblr-body-bg: rgb(234, 211, 171) !important;
+            --tblr-bg-surface: rgb(234, 211, 171) !important;
+        }
+
+        body, .page-wrapper, .page-body, html {
+            background-color: rgb(234, 211, 171) !important;
+        }
+
+        /* Left Navigation Sidebar - Match Dashboard Exactly */
+        .navbar-vertical, 
+        .navbar-vertical.navbar-expand-lg, 
+        aside.navbar,
+        .navbar-vertical.navbar-dark,
+        [data-bs-theme="dark"].navbar-vertical {
+            background-color: rgb(26, 32, 44) !important;
+            width: 250px !important;
+            min-width: 250px !important;
+            max-width: 250px !important;
+        }
+
+        .navbar-vertical .container-fluid {
+            padding: 0 !important;
+            width: 100% !important;
+        }
+
+        .navbar-vertical .navbar-brand {
+            padding: 1rem 0 !important;
+            margin: 0 2rem !important;
+            border-bottom: 1px solid rgb(45, 55, 72);
+        }
+
+        .navbar-vertical .navbar-collapse {
+            width: 100% !important;
+        }
+
+        .navbar-vertical .navbar-nav {
+            padding: 0.5rem;
+            width: 100% !important;
+        }
+
+        .navbar-vertical .nav-item {
+            margin: 0.125rem 0;
+        }
+
+        .navbar-vertical .nav-link,
+        .navbar-vertical .navbar-nav .nav-link,
+        .navbar-dark .nav-link,
+        [data-bs-theme="dark"] .nav-link {
+            color: rgb(234, 211, 171) !important;
+            padding: 0.5rem 0.75rem !important;
+            margin: 0 !important;
+            border-radius: 4px !important;
+            transition: all 0.2s !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        .navbar-vertical .nav-link:hover,
+        .navbar-vertical .navbar-nav .nav-link:hover {
+            background-color: rgb(45, 55, 72) !important;
+            color: rgb(234, 211, 171) !important;
+        }
+
+        .navbar-vertical .nav-link.active,
+        .navbar-vertical .navbar-nav .nav-link.active,
+        .navbar-vertical .nav-link.active.fw-bold {
+            background-color: rgb(203, 166, 104) !important;
+            color: rgb(26, 32, 44) !important;
+            font-weight: 400 !important; /* Override fw-bold */
+        }
+
+        /* Active nav icon color */
+        .navbar-vertical .nav-link.active .nav-link-icon,
+        .navbar-vertical .nav-link.active .nav-link-icon i,
+        .navbar-vertical .nav-link.active.fw-bold .nav-link-icon,
+        .navbar-vertical .nav-link.active.fw-bold .nav-link-icon i {
+            color: rgb(26, 32, 44) !important;
+        }
+
+        /* Brand/Logo */
+        .navbar-brand, 
+        .navbar-brand span, 
+        .navbar-brand h3,
+        .navbar-brand-autodark,
+        .navbar-brand-autodark .navbar-brand-image {
+            color: rgb(234, 211, 171) !important;
+        }
+
+        /* Nav icons */
+        .nav-link-icon,
+        .navbar-vertical .nav-link-icon,
+        [data-bs-theme="dark"] .nav-link-icon {
+            color: rgb(234, 211, 171) !important;
+            opacity: 0.8;
+            margin-right: 0.5rem;
+            width: 1.5rem;
+            text-align: center;
+        }
+
+        .navbar-vertical .nav-link-title {
+            font-size: 0.875rem;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+        
+        /* Ensure consistent spacing in nav items */
+        .navbar-vertical .nav-item .nav-link {
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        /* Primary Buttons */
+        .btn-primary {
+            background-color: rgb(26, 32, 44) !important;
+            border-color: rgb(26, 32, 44) !important;
+            color: rgb(234, 211, 171) !important;
+        }
+
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: rgb(45, 55, 72) !important;
+            border-color: rgb(45, 55, 72) !important;
+            color: rgb(234, 211, 171) !important;
+        }
+
+        /* Table Headers */
+        .table thead th, 
+        table thead th, 
+        table.dataTable thead th, 
+        .dataTable thead th {
+            background-color: rgb(26, 32, 44) !important;
+            color: rgb(234, 211, 171) !important;
+            border-color: rgb(45, 55, 72) !important;
+        }
+
+        /* Pagination */
+        .page-item.active .page-link {
+            background-color: rgb(26, 32, 44) !important;
+            border-color: rgb(26, 32, 44) !important;
+            color: rgb(234, 211, 171) !important;
+        }
+
+        .page-link {
+            color: rgb(26, 32, 44);
+        }
+
+        .page-link:hover {
+            background-color: rgba(26, 32, 44, 0.1);
+        }
+
+        /* DataTables Pagination */
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+            background: rgb(26, 32, 44) !important;
+            border-color: rgb(26, 32, 44) !important;
+            color: rgb(234, 211, 171) !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background: rgb(45, 55, 72) !important;
+            border-color: rgb(45, 55, 72) !important;
+            color: rgb(234, 211, 171) !important;
+        }
+
+        /* Card styling */
+        .card {
+            background: white;
+            border: 1px solid rgba(26, 32, 44, 0.1);
+            box-shadow: 0 1px 3px rgba(26, 32, 44, 0.08);
+        }
+
+        .card-header {
+            background-color: rgba(26, 32, 44, 0.03);
+            border-bottom: 1px solid rgba(26, 32, 44, 0.1);
+        }
+
+        /* Links */
+        a {
+            color: rgb(26, 32, 44);
+        }
+
+        a:hover {
+            color: rgb(45, 55, 72);
+        }
+
+        /* Form elements - white background */
+        .form-control,
+        .form-select,
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="number"],
+        input[type="date"],
+        input[type="time"],
+        input[type="datetime-local"],
+        textarea,
+        select,
+        .select2-container--default .select2-selection--single,
+        .select2-container--default .select2-selection--multiple,
+        .ts-wrapper .ts-control {
+            background-color: white !important;
+        }
+
+        .form-control:focus, 
+        .form-select:focus {
+            border-color: rgb(26, 32, 44);
+            box-shadow: 0 0 0 0.25rem rgba(26, 32, 44, 0.25);
+            background-color: white !important;
+        }
+
+        /* Dropdown */
+        .dropdown-menu {
+            border-color: rgba(26, 32, 44, 0.1);
+        }
+
+        .dropdown-item:hover, 
+        .dropdown-item:focus {
+            background-color: rgba(26, 32, 44, 0.05);
+        }
+
+        /* Badge */
+        .badge.bg-primary {
+            background-color: rgb(26, 32, 44) !important;
+        }
+
+        /* Secondary buttons */
+        .btn-secondary,
+        .btn-outline-secondary {
+            border-color: rgb(26, 32, 44);
+            color: rgb(26, 32, 44);
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: rgb(26, 32, 44);
+            color: rgb(234, 211, 171);
+        }
+
+        /* Filter/toolbar buttons - white background */
+        .btn-dark,
+        .btn-secondary {
+            background-color: white !important;
+            border-color: rgb(26, 32, 44) !important;
+            color: rgb(26, 32, 44) !important;
+        }
+
+        .btn-dark:hover,
+        .btn-secondary:hover {
+            background-color: rgb(234, 211, 171) !important;
+            border-color: rgb(26, 32, 44) !important;
+            color: rgb(26, 32, 44) !important;
+        }
+
+        /* Dropdown toggle buttons */
+        .btn-dark.dropdown-toggle,
+        .btn-secondary.dropdown-toggle {
+            background-color: white !important;
+            border-color: rgb(26, 32, 44) !important;
+            color: rgb(26, 32, 44) !important;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgb(234, 211, 171);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgb(26, 32, 44);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgb(45, 55, 72);
+        }
+
+        /* Footer */
+        footer, .footer {
+            background-color: rgb(234, 211, 171) !important;
+            border-color: rgba(26, 32, 44, 0.1) !important;
+        }
+
+        /* Select2 */
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: rgb(26, 32, 44) !important;
+        }
+
+        /* Navbar toggler for mobile */
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(234, 211, 171, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+        }
+
+        /* Responsive styles - match dashboard */
+        @media (max-width: 992px) {
+            .navbar-vertical,
+            .navbar-vertical.navbar-expand-lg {
+                width: 100% !important;
+                min-width: 100% !important;
+                max-width: 100% !important;
+                position: relative !important;
+                height: auto !important;
+            }
+
+            .navbar-vertical .container-fluid {
+                width: 100% !important;
+            }
+
+            .navbar-vertical .navbar-collapse {
+                width: 100% !important;
+            }
+
+            .navbar-vertical .navbar-nav {
+                width: 100% !important;
+            }
+
+            .page-wrapper {
+                margin-left: 0 !important;
+            }
+
+            .navbar-vertical .navbar-brand {
+                margin: 0 1rem !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar-vertical .navbar-brand {
+                margin: 0 1rem !important;
+                padding: 0.75rem 0 !important;
+            }
+        }
+    </style>
+    {% block head_css %}{% endblock %}
+</head>
+
+<body>
+{% block body %}{% endblock %}
+{% block modal %}{% endblock %}
+<script type="text/javascript" src="{{ url_for(__name__ ~ ':statics', path='js/vendor/jquery.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for(__name__ ~ ':statics', path='js/vendor/js.cookie.min.js') }}"></script>
+<script type="text/javascript"
+        src="{{ url_for(__name__ ~ ':statics', path='js/vendor/tabler.min-1.1.0.js') }}"></script>
+{% block script %}{% endblock %}
+<script>
+    $(function () {
+        $(".language-switcher-item").each(function () {
+            let el = $(this);
+            el.on("click", function () {
+                Cookies.set(String(el.data("cookie-name")), String(el.data("lang")));
+                window.location.reload();
+            });
+        });
+    });
+</script>
+</body>
+
+</html>
+
