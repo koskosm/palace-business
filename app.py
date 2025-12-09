@@ -458,9 +458,10 @@ class BookingView(ModelView):
     # Default sorting: latest to oldest by booking date, then by time
     fields_default_sort = [("booking_date", True), ("time_from", True)]
     
-    # Searchable fields (text search works for string fields only)
-    # For ID lookup, use Filter button; for enum fields (service, status, space), use Filter button
-    searchable_fields = ["customer_name", "customer_phone"]
+    # Searchable fields - appears in Filter dropdown
+    # Text search box works for: customer_name, customer_phone
+    # Filter button works for all: service, status, booking_date
+    searchable_fields = ["customer_name", "customer_phone", "service", "status", "booking_date"]
     
     # Sortable fields
     sortable_fields = [
