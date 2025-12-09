@@ -322,6 +322,12 @@
             background-color: rgb(26, 32, 44) !important;
         }
 
+        /* Wider search field */
+        #searchInput {
+            width: 320px !important;
+            min-width: 320px !important;
+        }
+
         /* Navbar toggler for mobile */
         .navbar-toggler-icon {
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(234, 211, 171, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
@@ -364,6 +370,34 @@
                 margin: 0 1rem !important;
                 padding: 0.75rem 0 !important;
             }
+
+            /* Only stack the page length and search area */
+            .card-body > .d-flex {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 0.75rem;
+            }
+
+            .card-body > .d-flex > .ms-auto {
+                margin-left: 0 !important;
+                width: 100%;
+            }
+
+            .card-body > .d-flex > .ms-auto > .ms-2.d-inline-block {
+                width: 100% !important;
+                display: block !important;
+                margin-left: 0 !important;
+            }
+
+            .card-body > .d-flex > .ms-auto > .ms-2.d-inline-block > .input-icon {
+                width: 100% !important;
+            }
+
+            #searchInput {
+                width: 100% !important;
+                min-width: 100% !important;
+                max-width: 100% !important;
+            }
         }
     </style>
     {% block head_css %}{% endblock %}
@@ -386,6 +420,12 @@
                 window.location.reload();
             });
         });
+        
+        // Update search placeholder to clarify searchable fields
+        var searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.placeholder = 'Search by customer name or phone...';
+        }
     });
 </script>
 </body>

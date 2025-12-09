@@ -459,7 +459,7 @@ class BookingView(ModelView):
     fields_default_sort = [("booking_date", True), ("time_from", True)]
     
     # Searchable fields (text search works for string fields only)
-    # For enum fields (service, status, space), use the Filter button instead
+    # For ID lookup, use Filter button; for enum fields (service, status, space), use Filter button
     searchable_fields = ["customer_name", "customer_phone"]
     
     # Sortable fields
