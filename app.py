@@ -409,6 +409,16 @@ class BookingView(ModelView):
     name = "Booking"
     label = "Bookings"
     
+    # Disable create, edit and delete (must be methods)
+    def can_create(self, request) -> bool:
+        return False
+    
+    def can_edit(self, request) -> bool:
+        return False
+    
+    def can_delete(self, request) -> bool:
+        return False
+    
     # Fields to display
     fields = [
         IntegerField("id", label="Booking ID"),
@@ -444,7 +454,8 @@ class BookingView(ModelView):
     # Default sorting: latest to oldest by booking date, then by time
     fields_default_sort = [("booking_date", True), ("time_from", True)]
     
-    # Searchable fields
+    # Searchable fields (text search works for string fields only)
+    # For enum fields (service, status, space), use the Filter button instead
     searchable_fields = ["customer_name", "customer_phone"]
     
     # Sortable fields
