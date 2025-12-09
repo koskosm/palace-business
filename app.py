@@ -419,6 +419,10 @@ class BookingView(ModelView):
     def can_delete(self, request) -> bool:
         return False
     
+    # Page size options (use -1 for "All" to enable full export)
+    page_size = 25
+    page_size_options = [25, 50, 100, -1]  # -1 = "All" in DataTables
+    
     # Fields to display
     fields = [
         IntegerField("id", label="Booking ID"),
