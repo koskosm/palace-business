@@ -399,6 +399,44 @@
                 max-width: 100% !important;
             }
         }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0.75rem 0;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(26, 32, 44, 0.1);
+        }
+
+        .top-bar-right {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .top-bar-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgb(26, 32, 44);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .top-bar-link:hover {
+            background: rgba(26, 32, 44, 0.05);
+            color: rgb(26, 32, 44);
+        }
+
+        .top-bar-link i {
+            font-size: 1rem;
+        }
     </style>
     {% block head_css %}{% endblock %}
 </head>
@@ -425,6 +463,26 @@
         var searchInput = document.getElementById('searchInput');
         if (searchInput) {
             searchInput.placeholder = 'Search by customer name or phone...';
+        }
+
+        // Add top bar to admin pages
+        var pageWrapper = document.querySelector('.page-wrapper');
+        if (pageWrapper && !document.querySelector('.top-bar')) {
+            var topBar = document.createElement('div');
+            topBar.className = 'top-bar';
+            topBar.innerHTML = `
+                <div class="top-bar-right">
+                    <a href="#" class="top-bar-link">
+                        <i class="fa-solid fa-user"></i>
+                        <span>Account</span>
+                    </a>
+                    <a href="#" class="top-bar-link" onclick="alert('Logout functionality coming soon!'); return false;">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            `;
+            pageWrapper.insertBefore(topBar, pageWrapper.firstChild);
         }
     });
 </script>
