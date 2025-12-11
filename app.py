@@ -317,7 +317,7 @@ def get_dashboard_data(start_date: date, end_date: date) -> dict:
         days_in_range = (end_date - start_date).days + 1
         
         # =====================================================================
-        # Space Utilization Rate
+        # Space Utilization Rate (with modality breakdown)
         # =====================================================================
         space_data = {}
         for space in Space:
@@ -327,26 +327,58 @@ def get_dashboard_data(start_date: date, end_date: date) -> dict:
             utilization = (total_booked_minutes / max_capacity_minutes * 100) if max_capacity_minutes > 0 else 0
             space_revenue = sum(b.revenue for b in space_bookings)
             
+            # Modality breakdown for this space
+            modality_breakdown = {}
+            for service in ServiceModality:
+                service_space_bookings = [b for b in space_bookings if b.service == service]
+                service_minutes = sum(b.duration_minutes for b in service_space_bookings)
+                service_revenue = sum(b.revenue for b in service_space_bookings)
+                booking_count = len(service_space_bookings)
+                avg_revenue = round(service_revenue / booking_count, 2) if booking_count > 0 else 0
+                
+                # Upcoming bookings for this modality/space
+                upcoming_service_bookings = [b for b in service_space_bookings if b.status == BookingStatus.UPCOMING]
+                upcoming_count = len(upcoming_service_bookings)
+                projected_revenue = round(sum(b.revenue for b in upcoming_service_bookings), 2)
+                
+                modality_breakdown[service.value] = {
+                    "bookings": booking_count,
+                    "hours": round(service_minutes / 60, 1),
+                    "revenue": round(service_revenue, 2),
+                    "avg_booking_revenue": avg_revenue,
+                    "upcoming_bookings": upcoming_count,
+                    "projected_revenue": projected_revenue
+                }
+            
             space_data[space.value] = {
                 "utilization": round(utilization, 1),
                 "booked_hours": round(total_booked_minutes / 60, 1),
                 "total_bookings": len(space_bookings),
-                "revenue": round(space_revenue, 2)
+                "revenue": round(space_revenue, 2),
+                "modality_breakdown": modality_breakdown
             }
         
         # =====================================================================
-        # Daily Revenue (for chart)
+        # Daily Revenue (for chart) - with modality breakdown
         # =====================================================================
         daily_revenue = []
         current_date = start_date
         while current_date <= end_date:
             day_bookings = [b for b in bookings if b.booking_date == current_date]
             day_revenue = sum(b.revenue for b in day_bookings)
+            
+            # Revenue by modality for this day
+            modality_revenue = {}
+            for service in ServiceModality:
+                service_day_bookings = [b for b in day_bookings if b.service == service]
+                modality_revenue[service.value] = round(sum(b.revenue for b in service_day_bookings), 2)
+            
             daily_revenue.append({
                 "date": current_date.strftime("%Y-%m-%d"),
                 "day": current_date.strftime("%a"),
                 "revenue": round(day_revenue, 2),
-                "bookings": len(day_bookings)
+                "bookings": len(day_bookings),
+                "by_modality": modality_revenue
             })
             current_date += timedelta(days=1)
         
@@ -361,19 +393,38 @@ def get_dashboard_data(start_date: date, end_date: date) -> dict:
             service_bookings = [b for b in bookings if b.service == service]
             service_minutes = sum(b.duration_minutes for b in service_bookings)
             service_revenue = sum(b.revenue for b in service_bookings)
+            booking_count = len(service_bookings)
             
             # Utilization as percentage of total booked time
             utilization = (service_minutes / total_booked_minutes * 100) if total_booked_minutes > 0 else 0
             # Revenue distribution
             revenue_share = (service_revenue / total_revenue * 100) if total_revenue > 0 else 0
+            # Average booking revenue
+            avg_booking_revenue = round(service_revenue / booking_count, 2) if booking_count > 0 else 0
             
             modality_data[service.value] = {
-                "bookings": len(service_bookings),
+                "bookings": booking_count,
                 "hours": round(service_minutes / 60, 1),
                 "revenue": round(service_revenue, 2),
                 "utilization": round(utilization, 1),
-                "revenue_share": round(revenue_share, 1)
+                "revenue_share": round(revenue_share, 1),
+                "avg_booking_revenue": avg_booking_revenue
             }
+        
+        # =====================================================================
+        # Booking Status Counts
+        # =====================================================================
+        upcoming_bookings = session.query(Booking).filter(
+            Booking.booking_date >= start_date,
+            Booking.booking_date <= end_date,
+            Booking.status == BookingStatus.UPCOMING
+        ).count()
+        
+        completed_bookings = session.query(Booking).filter(
+            Booking.booking_date >= start_date,
+            Booking.booking_date <= end_date,
+            Booking.status == BookingStatus.COMPLETED
+        ).count()
         
         # =====================================================================
         # Summary Stats
@@ -383,7 +434,9 @@ def get_dashboard_data(start_date: date, end_date: date) -> dict:
             "total_revenue": round(total_revenue, 2),
             "total_hours": round(total_booked_minutes / 60, 1),
             "avg_daily_revenue": round(total_revenue / days_in_range, 2) if days_in_range > 0 else 0,
-            "avg_daily_bookings": round(len(bookings) / days_in_range, 1) if days_in_range > 0 else 0
+            "avg_daily_bookings": round(len(bookings) / days_in_range, 1) if days_in_range > 0 else 0,
+            "upcoming_bookings": upcoming_bookings,
+            "completed_bookings": completed_bookings
         }
         
         return {

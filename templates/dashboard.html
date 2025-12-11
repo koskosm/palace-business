@@ -170,6 +170,7 @@
             display: flex;
             gap: 0.5rem;
             margin-left: auto;
+            align-items: center;
         }
 
         .quick-filter-btn {
@@ -187,6 +188,34 @@
             background: var(--palace-primary);
             color: var(--palace-nav-text);
             border-color: var(--palace-primary);
+        }
+
+        .quick-filter-btn.future {
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #059669;
+        }
+
+        .quick-filter-btn.future:hover, .quick-filter-btn.future.active {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+
+        .filter-group-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+        }
+
+        .filter-divider {
+            width: 1px;
+            height: 24px;
+            background: rgba(26, 32, 44, 0.2);
+            margin: 0 0.5rem;
+            align-self: center;
         }
 
         .summary-cards {
@@ -218,6 +247,8 @@
         .summary-card.accent::before { background: var(--palace-accent); }
         .summary-card.success::before { background: #10b981; }
         .summary-card.info::before { background: #3b82f6; }
+        .summary-card.upcoming::before { background: #8b5cf6; }
+        .summary-card.completed::before { background: #06b6d4; }
 
         .summary-card h3 {
             font-size: 0.85rem;
@@ -302,6 +333,91 @@
 
         .space-stat.palace1 .utilization { color: var(--palace-primary); }
         .space-stat.palace2 .utilization { color: var(--palace-accent); }
+
+        .space-header-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .space-header-card {
+            background: rgba(26, 32, 44, 0.03);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+
+        .space-header-card.palace1 {
+            border-color: var(--palace-primary);
+            background: rgba(26, 32, 44, 0.05);
+        }
+
+        .space-header-card.palace2 {
+            border-color: var(--palace-accent);
+            background: rgba(203, 166, 104, 0.1);
+        }
+
+        .space-header-card .space-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--palace-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .space-header-card .space-util {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .space-header-card.palace1 .space-util { color: var(--palace-primary); }
+        .space-header-card.palace2 .space-util { color: var(--palace-accent); }
+
+        .space-header-card .space-meta {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .chart-header h2 {
+            margin-bottom: 0;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 0;
+            background: rgba(26, 32, 44, 0.05);
+            border-radius: 8px;
+            padding: 4px;
+        }
+
+        .toggle-btn {
+            padding: 0.4rem 1rem;
+            background: transparent;
+            color: var(--palace-primary);
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(26, 32, 44, 0.1);
+        }
+
+        .toggle-btn.active {
+            background: var(--palace-primary);
+            color: var(--palace-nav-text);
+        }
 
         .space-stat .details {
             font-size: 0.8rem;
@@ -489,9 +605,15 @@
                 <i class="fa fa-filter me-1"></i>Apply
             </button>
             <div class="quick-filters">
-                <button class="quick-filter-btn" onclick="setQuickFilter(7)">Last 7 Days</button>
-                <button class="quick-filter-btn" onclick="setQuickFilter(14)">Last 14 Days</button>
-                <button class="quick-filter-btn" onclick="setQuickFilter(30)">Last 30 Days</button>
+                <span class="filter-group-label">Past:</span>
+                <button class="quick-filter-btn" onclick="setQuickFilter(7)">7 Days</button>
+                <button class="quick-filter-btn" onclick="setQuickFilter(14)">14 Days</button>
+                <button class="quick-filter-btn" onclick="setQuickFilter(30)">30 Days</button>
+                <span class="filter-divider"></span>
+                <span class="filter-group-label">Future:</span>
+                <button class="quick-filter-btn future" onclick="setFutureFilter(7)">7 Days</button>
+                <button class="quick-filter-btn future" onclick="setFutureFilter(14)">14 Days</button>
+                <button class="quick-filter-btn future" onclick="setFutureFilter(30)">30 Days</button>
             </div>
         </div>
 
@@ -507,6 +629,16 @@
                 <div class="value" id="totalBookings">0</div>
                 <div class="subvalue" id="avgDailyBookings">Avg: 0/day</div>
             </div>
+            <div class="summary-card upcoming">
+                <h3>Upcoming Bookings</h3>
+                <div class="value" id="upcomingBookings">0</div>
+                <div class="subvalue">scheduled</div>
+            </div>
+            <div class="summary-card completed">
+                <h3>Completed Bookings</h3>
+                <div class="value" id="completedBookings">0</div>
+                <div class="subvalue">finished</div>
+            </div>
             <div class="summary-card success">
                 <h3>Total Hours</h3>
                 <div class="value" id="totalHours">0</div>
@@ -519,39 +651,66 @@
             </div>
         </div>
 
-        <!-- Charts Row 1 -->
-        <div class="charts-row">
-            <!-- Space Utilization -->
-            <div class="chart-card">
-                <h2><i class="fa fa-building"></i>Space Utilization Rate</h2>
-                <div class="chart-container">
-                    <canvas id="spaceChart"></canvas>
-                </div>
-                <div class="space-stats">
-                    <div class="space-stat palace1">
-                        <div class="name">🏛️ Palace 1</div>
-                        <div class="utilization" id="palace1Util">0%</div>
-                        <div class="details" id="palace1Details">0 bookings • 0 hrs</div>
+        <!-- Space Utilization Section -->
+        <div class="chart-card" style="margin-bottom: 2rem;">
+            <h2><i class="fa fa-building"></i>Space Utilization by Modality</h2>
+            <div class="space-overview">
+                <div class="space-header-cards">
+                    <div class="space-header-card palace1">
+                        <div class="space-title">🏛️ Palace 1</div>
+                        <div class="space-util" id="palace1Util">0%</div>
+                        <div class="space-meta" id="palace1Details">0 bookings • 0 hrs</div>
                     </div>
-                    <div class="space-stat palace2">
-                        <div class="name">🏛️ Palace 2</div>
-                        <div class="utilization" id="palace2Util">0%</div>
-                        <div class="details" id="palace2Details">0 bookings • 0 hrs</div>
+                    <div class="space-header-card palace2">
+                        <div class="space-title">🏛️ Palace 2</div>
+                        <div class="space-util" id="palace2Util">0%</div>
+                        <div class="space-meta" id="palace2Details">0 bookings • 0 hrs</div>
                     </div>
                 </div>
             </div>
+            <div class="table-responsive" style="margin-top: 1.5rem;">
+                <table class="modality-table">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" style="vertical-align: middle;">Modality</th>
+                            <th colspan="5" style="text-align: center; background: rgba(26, 32, 44, 0.08);">Palace 1</th>
+                            <th colspan="5" style="text-align: center; background: rgba(203, 166, 104, 0.15);">Palace 2</th>
+                        </tr>
+                        <tr>
+                            <th style="background: rgba(26, 32, 44, 0.05);">Bookings</th>
+                            <th style="background: rgba(26, 32, 44, 0.05);">Hours</th>
+                            <th style="background: rgba(26, 32, 44, 0.05);">Avg Rev</th>
+                            <th style="background: rgba(251, 191, 36, 0.15); color: #b45309;">Upcoming</th>
+                            <th style="background: rgba(251, 191, 36, 0.15); color: #b45309;">Projected</th>
+                            <th style="background: rgba(203, 166, 104, 0.1);">Bookings</th>
+                            <th style="background: rgba(203, 166, 104, 0.1);">Hours</th>
+                            <th style="background: rgba(203, 166, 104, 0.1);">Avg Rev</th>
+                            <th style="background: rgba(251, 191, 36, 0.15); color: #b45309;">Upcoming</th>
+                            <th style="background: rgba(251, 191, 36, 0.15); color: #b45309;">Projected</th>
+                        </tr>
+                    </thead>
+                    <tbody id="spaceModalityTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-            <!-- Daily Revenue -->
-            <div class="chart-card">
+        <!-- Daily Revenue Chart -->
+        <div class="chart-card" style="margin-bottom: 2rem;">
+            <div class="chart-header">
                 <h2><i class="fa fa-dollar-sign"></i>Daily Revenue</h2>
-                <div class="chart-container">
-                    <canvas id="revenueChart"></canvas>
+                <div class="view-toggle">
+                    <button class="toggle-btn active" id="totalViewBtn" onclick="setRevenueView('total')">Total</button>
+                    <button class="toggle-btn" id="modalityViewBtn" onclick="setRevenueView('modality')">By Modality</button>
                 </div>
-                <div class="revenue-pagination">
-                    <button id="prevPage" onclick="changePage(-1)"><i class="fa fa-chevron-left"></i></button>
-                    <span id="pageInfo">Page 1 of 1</span>
-                    <button id="nextPage" onclick="changePage(1)"><i class="fa fa-chevron-right"></i></button>
-                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="revenueChart"></canvas>
+            </div>
+            <div class="revenue-pagination">
+                <button id="prevPage" onclick="changePage(-1)"><i class="fa fa-chevron-left"></i></button>
+                <span id="pageInfo">Page 1 of 1</span>
+                <button id="nextPage" onclick="changePage(1)"><i class="fa fa-chevron-right"></i></button>
             </div>
         </div>
 
@@ -585,6 +744,7 @@
                             <th>Bookings</th>
                             <th>Hours</th>
                             <th>Revenue (HKD)</th>
+                            <th>Avg Booking Revenue</th>
                             <th>Utilization</th>
                             <th>Revenue Share</th>
                         </tr>
@@ -605,6 +765,7 @@
         let dashboardData = null;
         let currentPage = 0;
         const itemsPerPage = 7;
+        let revenueViewMode = 'total'; // 'total' or 'modality'
 
         // Color palette
         const colors = {
@@ -624,7 +785,7 @@
         };
 
         // Charts
-        let spaceChart, revenueChart, modalityChart, revenueDistChart;
+        let revenueChart, modalityChart, revenueDistChart;
 
         // Set default dates
         function setDefaultDates() {
@@ -647,60 +808,62 @@
         });
 
         function initCharts() {
-            // Space Utilization Chart
-            const spaceCtx = document.getElementById('spaceChart').getContext('2d');
-            spaceChart = new Chart(spaceCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Palace 1', 'Palace 2'],
-                    datasets: [{
-                        label: 'Utilization %',
-                        data: [0, 0],
-                        backgroundColor: [colors.primary, colors.accent],
-                        borderRadius: 8,
-                        barThickness: 60
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            ticks: {
-                                callback: value => value + '%'
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Daily Revenue Chart
+            // Daily Revenue Chart - Total + Multi-line for modalities
             const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            const modalities = ['Strength', 'Pilates', 'Yoga', 'Physiotherapy', 'Hyrox'];
+            
+            // Total revenue dataset (index 0)
+            const totalDataset = {
+                label: 'Total Revenue',
+                data: [],
+                borderColor: colors.primary,
+                backgroundColor: 'rgba(26, 32, 44, 0.1)',
+                fill: true,
+                tension: 0.4,
+                pointRadius: 6,
+                pointBackgroundColor: colors.primary,
+                borderWidth: 2,
+                hidden: false
+            };
+            
+            // Modality datasets (index 1-5)
+            const modalityDatasets = modalities.map(modality => ({
+                label: modality,
+                data: [],
+                borderColor: modalityColors[modality],
+                backgroundColor: modalityColors[modality] + '20',
+                fill: false,
+                tension: 0.4,
+                pointRadius: 4,
+                pointBackgroundColor: modalityColors[modality],
+                borderWidth: 2,
+                hidden: true  // Hidden by default
+            }));
+            
             revenueChart = new Chart(revenueCtx, {
                 type: 'line',
                 data: {
                     labels: [],
-                    datasets: [{
-                        label: 'Revenue (HKD)',
-                        data: [],
-                        borderColor: colors.primary,
-                        backgroundColor: 'rgba(26, 32, 44, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 6,
-                        pointBackgroundColor: colors.primary
-                    }]
+                    datasets: [totalDataset, ...modalityDatasets]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
                     plugins: {
-                        legend: { display: false }
+                        legend: {
+                            display: false  // Will toggle based on view
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': HKD ' + context.raw.toLocaleString();
+                                }
+                            }
+                        }
                     },
                     scales: {
                         y: {
@@ -776,6 +939,8 @@
             document.getElementById('avgDailyRevenue').textContent = 'Avg: HKD ' + data.summary.avg_daily_revenue.toLocaleString() + '/day';
             document.getElementById('totalBookings').textContent = data.summary.total_bookings.toLocaleString();
             document.getElementById('avgDailyBookings').textContent = 'Avg: ' + data.summary.avg_daily_bookings + '/day';
+            document.getElementById('upcomingBookings').textContent = data.summary.upcoming_bookings.toLocaleString();
+            document.getElementById('completedBookings').textContent = data.summary.completed_bookings.toLocaleString();
             document.getElementById('totalHours').textContent = data.summary.total_hours;
             document.getElementById('daysCount').textContent = data.date_range.days;
             document.getElementById('dateRangeText').textContent = `${data.date_range.start} to ${data.date_range.end}`;
@@ -783,14 +948,14 @@
             // Update space utilization
             const space1 = data.space_utilization['Palace 1'];
             const space2 = data.space_utilization['Palace 2'];
-            
-            spaceChart.data.datasets[0].data = [space1.utilization, space2.utilization];
-            spaceChart.update();
 
             document.getElementById('palace1Util').textContent = space1.utilization + '%';
             document.getElementById('palace1Details').textContent = `${space1.total_bookings} bookings • ${space1.booked_hours} hrs`;
             document.getElementById('palace2Util').textContent = space2.utilization + '%';
             document.getElementById('palace2Details').textContent = `${space2.total_bookings} bookings • ${space2.booked_hours} hrs`;
+
+            // Update space modality breakdown table
+            updateSpaceModalityTable(space1, space2);
 
             // Update daily revenue with pagination
             currentPage = 0;
@@ -822,14 +987,45 @@
             const endIdx = Math.min(startIdx + itemsPerPage, allData.length);
             const pageData = allData.slice(startIdx, endIdx);
 
+            const modalities = ['Strength', 'Pilates', 'Yoga', 'Physiotherapy', 'Hyrox'];
+            
             revenueChart.data.labels = pageData.map(d => `${d.day}\n${d.date.slice(5)}`);
+            
+            // Update total revenue data (index 0)
             revenueChart.data.datasets[0].data = pageData.map(d => d.revenue);
+            
+            // Update each modality's data (index 1-5)
+            modalities.forEach((modality, index) => {
+                revenueChart.data.datasets[index + 1].data = pageData.map(d => d.by_modality[modality] || 0);
+            });
+            
             revenueChart.update();
 
             // Update pagination controls
             document.getElementById('pageInfo').textContent = `Page ${currentPage + 1} of ${totalPages}`;
             document.getElementById('prevPage').disabled = currentPage === 0;
             document.getElementById('nextPage').disabled = currentPage >= totalPages - 1;
+        }
+
+        function setRevenueView(mode) {
+            revenueViewMode = mode;
+            
+            // Update toggle buttons
+            document.getElementById('totalViewBtn').classList.toggle('active', mode === 'total');
+            document.getElementById('modalityViewBtn').classList.toggle('active', mode === 'modality');
+            
+            // Toggle datasets visibility
+            // Index 0 = Total, Index 1-5 = Modalities
+            revenueChart.data.datasets[0].hidden = (mode !== 'total');
+            
+            for (let i = 1; i <= 5; i++) {
+                revenueChart.data.datasets[i].hidden = (mode !== 'modality');
+            }
+            
+            // Toggle legend visibility
+            revenueChart.options.plugins.legend.display = (mode === 'modality');
+            
+            revenueChart.update();
         }
 
         function changePage(delta) {
@@ -852,6 +1048,7 @@
                     <td>${data.bookings}</td>
                     <td>${data.hours}</td>
                     <td>HKD ${data.revenue.toLocaleString()}</td>
+                    <td><strong>HKD ${data.avg_booking_revenue.toLocaleString()}</strong></td>
                     <td>
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                             <div class="progress-bar-custom">
@@ -873,6 +1070,35 @@
             }
         }
 
+        function updateSpaceModalityTable(space1, space2) {
+            const tbody = document.getElementById('spaceModalityTableBody');
+            tbody.innerHTML = '';
+
+            const modalities = ['Strength', 'Pilates', 'Yoga', 'Physiotherapy', 'Hyrox'];
+            
+            for (const modality of modalities) {
+                const p1 = space1.modality_breakdown[modality] || { bookings: 0, hours: 0, avg_booking_revenue: 0, upcoming_bookings: 0, projected_revenue: 0 };
+                const p2 = space2.modality_breakdown[modality] || { bookings: 0, hours: 0, avg_booking_revenue: 0, upcoming_bookings: 0, projected_revenue: 0 };
+                const badgeClass = modality.toLowerCase().replace(' ', '');
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><span class="modality-badge ${badgeClass}">${modality}</span></td>
+                    <td style="background: rgba(26, 32, 44, 0.02);">${p1.bookings}</td>
+                    <td style="background: rgba(26, 32, 44, 0.02);">${p1.hours}</td>
+                    <td style="background: rgba(26, 32, 44, 0.02);">HKD ${p1.avg_booking_revenue.toLocaleString()}</td>
+                    <td style="background: rgba(251, 191, 36, 0.1); color: #b45309; font-weight: 600;">${p1.upcoming_bookings}</td>
+                    <td style="background: rgba(251, 191, 36, 0.1); color: #b45309; font-weight: 600;">HKD ${p1.projected_revenue.toLocaleString()}</td>
+                    <td style="background: rgba(203, 166, 104, 0.05);">${p2.bookings}</td>
+                    <td style="background: rgba(203, 166, 104, 0.05);">${p2.hours}</td>
+                    <td style="background: rgba(203, 166, 104, 0.05);">HKD ${p2.avg_booking_revenue.toLocaleString()}</td>
+                    <td style="background: rgba(251, 191, 36, 0.1); color: #b45309; font-weight: 600;">${p2.upcoming_bookings}</td>
+                    <td style="background: rgba(251, 191, 36, 0.1); color: #b45309; font-weight: 600;">HKD ${p2.projected_revenue.toLocaleString()}</td>
+                `;
+                tbody.appendChild(row);
+            }
+        }
+
         function applyDateFilter() {
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
@@ -886,6 +1112,20 @@
             const endDate = new Date();
             const startDate = new Date();
             startDate.setDate(endDate.getDate() - days + 1);
+
+            document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
+            document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
+            
+            fetchDashboardData(
+                document.getElementById('startDate').value,
+                document.getElementById('endDate').value
+            );
+        }
+
+        function setFutureFilter(days) {
+            const startDate = new Date();
+            const endDate = new Date();
+            endDate.setDate(startDate.getDate() + days - 1);
 
             document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
             document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
