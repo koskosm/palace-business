@@ -79,8 +79,8 @@ class PaymentMethod(str, Enum):
 
 
 class Space(str, Enum):
-    PALACE_1 = "Palace 1"
-    PALACE_2 = "Palace 2"
+    PALACE_SEVEN = "Palace Seven"
+    PALACE_EIGHT = "Palace Eight"
 
 
 class Booking(Base):

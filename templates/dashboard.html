@@ -657,12 +657,12 @@
             <div class="space-overview">
                 <div class="space-header-cards">
                     <div class="space-header-card palace1">
-                        <div class="space-title">🏛️ Palace 1</div>
+                        <div class="space-title">🏛️ Palace Seven</div>
                         <div class="space-util" id="palace1Util">0%</div>
                         <div class="space-meta" id="palace1Details">0 bookings • 0 hrs</div>
                     </div>
                     <div class="space-header-card palace2">
-                        <div class="space-title">🏛️ Palace 2</div>
+                        <div class="space-title">🏛️ Palace Eight</div>
                         <div class="space-util" id="palace2Util">0%</div>
                         <div class="space-meta" id="palace2Details">0 bookings • 0 hrs</div>
                     </div>
@@ -673,8 +673,8 @@
                     <thead>
                         <tr>
                             <th rowspan="2" style="vertical-align: middle;">Modality</th>
-                            <th colspan="5" style="text-align: center; background: rgba(26, 32, 44, 0.08);">Palace 1</th>
-                            <th colspan="5" style="text-align: center; background: rgba(203, 166, 104, 0.15);">Palace 2</th>
+                            <th colspan="5" style="text-align: center; background: rgba(26, 32, 44, 0.08);">Palace Seven</th>
+                            <th colspan="5" style="text-align: center; background: rgba(203, 166, 104, 0.15);">Palace Eight</th>
                         </tr>
                         <tr>
                             <th style="background: rgba(26, 32, 44, 0.05);">Bookings</th>
@@ -946,8 +946,8 @@
             document.getElementById('dateRangeText').textContent = `${data.date_range.start} to ${data.date_range.end}`;
 
             // Update space utilization
-            const space1 = data.space_utilization['Palace 1'];
-            const space2 = data.space_utilization['Palace 2'];
+            const space1 = data.space_utilization['Palace Seven'];
+            const space2 = data.space_utilization['Palace Eight'];
 
             document.getElementById('palace1Util').textContent = space1.utilization + '%';
             document.getElementById('palace1Details').textContent = `${space1.total_bookings} bookings • ${space1.booked_hours} hrs`;
