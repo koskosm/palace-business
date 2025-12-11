@@ -144,11 +144,31 @@
         }
 
         .dashboard-header {
-            background: var(--palace-primary);
-            padding: 2rem;
+            background: 
+                linear-gradient(to right, var(--palace-primary) 0%, var(--palace-primary) 50%, transparent 100%),
+                url('/admin/statics/images/palacestudio.jpeg');
+            background-size: cover, cover;
+            background-position: center, right center;
+            padding: 3rem;
+            min-height: 180px;
             border-radius: 12px;
             margin-bottom: 2rem;
             color: var(--palace-nav-text);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-header-content {
+            flex: 1;
+        }
+
+        .dashboard-header-logo {
+            height: 40px;
+            width: auto;
+            opacity: 0.9;
         }
 
         .dashboard-header h1 {
@@ -642,8 +662,11 @@
 
         <!-- Header -->
         <div class="dashboard-header">
-            <h1><i class="fa fa-chart-line me-2"></i>Dashboard</h1>
-            <p>Business performance overview and analytics</p>
+            <div class="dashboard-header-content">
+                <h1><i class="fa fa-chart-line me-2"></i>Dashboard</h1>
+                <p>Business performance overview and analytics</p>
+            </div>
+            <img src="/admin/statics/images/hkl-logo.svg" alt="HKL Logo" class="dashboard-header-logo">
         </div>
 
         <!-- Date Filter -->
