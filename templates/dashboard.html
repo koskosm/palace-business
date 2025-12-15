@@ -436,6 +436,55 @@
             color: #6b7280;
         }
 
+        /* Location Tabs */
+        .location-tabs {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .location-tab {
+            padding: 0.5rem 1rem;
+            background: rgba(26, 32, 44, 0.05);
+            border: 1px solid rgba(26, 32, 44, 0.2);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--palace-primary);
+        }
+
+        .location-tab:hover {
+            background: rgba(26, 32, 44, 0.1);
+        }
+
+        .location-tab.active {
+            background: var(--palace-primary);
+            color: var(--palace-nav-text);
+            border-color: var(--palace-primary);
+        }
+
+        .active-location {
+            background: linear-gradient(135deg, var(--palace-primary) 0%, rgb(45, 55, 72) 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            color: var(--palace-nav-text);
+            margin-top: 1rem;
+        }
+
+        .active-location .space-util {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .active-location .space-meta {
+            font-size: 1rem;
+            opacity: 0.9;
+            color: var(--palace-nav-text);
+        }
+
         .chart-header {
             display: flex;
             justify-content: space-between;
@@ -725,47 +774,36 @@
             </div>
         </div>
 
-        <!-- Space Utilization Section -->
+        <!-- Space Utilization Section with Tabs -->
         <div class="chart-card" style="margin-bottom: 2rem;">
             <h2><i class="fa fa-building"></i>Space Utilization by Modality</h2>
-            <div class="space-overview">
-                <div class="space-header-cards">
-                    <div class="space-header-card palace1">
-                        <div class="space-title">🏛️ Palace Seven</div>
-                        <div class="space-util" id="palace1Util">0%</div>
-                        <div class="space-meta" id="palace1Details">0 bookings • 0 hrs</div>
-                    </div>
-                    <div class="space-header-card palace2">
-                        <div class="space-title">🏛️ Palace Eight</div>
-                        <div class="space-util" id="palace2Util">0%</div>
-                        <div class="space-meta" id="palace2Details">0 bookings • 0 hrs</div>
-                    </div>
-                </div>
+            <div class="location-tabs" id="locationTabs" style="margin-top: 1rem;">
+                <!-- Tabs will be populated dynamically -->
             </div>
-            <div class="table-responsive" style="margin-top: 1.5rem;">
-                <table class="modality-table">
-                    <thead>
-                        <tr>
-                            <th rowspan="2" style="vertical-align: middle;">Modality</th>
-                            <th colspan="5" style="text-align: center; background: rgba(26, 32, 44, 0.08);">Palace Seven</th>
-                            <th colspan="5" style="text-align: center; background: rgba(203, 166, 104, 0.15);">Palace Eight</th>
-                        </tr>
-                        <tr>
-                            <th style="background: rgba(26, 32, 44, 0.05);">Bookings</th>
-                            <th style="background: rgba(26, 32, 44, 0.05);">Hours</th>
-                            <th style="background: rgba(26, 32, 44, 0.05);">Avg Rev</th>
-                            <th style="background: rgba(251, 191, 36, 0.15); color: #b45309;">Upcoming</th>
-                            <th style="background: rgba(251, 191, 36, 0.15); color: #b45309;">Projected</th>
-                            <th style="background: rgba(203, 166, 104, 0.1);">Bookings</th>
-                            <th style="background: rgba(203, 166, 104, 0.1);">Hours</th>
-                            <th style="background: rgba(203, 166, 104, 0.1);">Avg Rev</th>
-                            <th style="background: rgba(251, 191, 36, 0.15); color: #b45309;">Upcoming</th>
-                            <th style="background: rgba(251, 191, 36, 0.15); color: #b45309;">Projected</th>
-                        </tr>
-                    </thead>
-                    <tbody id="spaceModalityTableBody">
-                    </tbody>
-                </table>
+            
+            <!-- Location Content -->
+            <div id="locationContent">
+                <div class="space-header-card active-location">
+                    <div class="space-util" id="activeSpaceUtil">0%</div>
+                    <div class="space-meta" id="activeSpaceDetails">0 bookings • 0 hrs • HKD 0 revenue</div>
+                </div>
+                
+                <div class="table-responsive" style="margin-top: 1.5rem;">
+                    <table class="modality-table">
+                        <thead>
+                            <tr>
+                                <th>Modality</th>
+                                <th>Bookings</th>
+                                <th>Hours</th>
+                                <th>Avg Revenue</th>
+                                <th style="background: rgba(251, 191, 36, 0.15); color: #b45309;">Upcoming</th>
+                                <th style="background: rgba(251, 191, 36, 0.15); color: #b45309;">Projected Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody id="locationModalityTableBody">
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -807,27 +845,6 @@
             </div>
         </div>
 
-        <!-- Modality Performance Table -->
-        <div class="chart-card">
-            <h2><i class="fa fa-table"></i>Modality Performance Details</h2>
-            <div class="table-responsive">
-                <table class="modality-table">
-                    <thead>
-                        <tr>
-                            <th>Modality</th>
-                            <th>Bookings</th>
-                            <th>Hours</th>
-                            <th>Revenue (HKD)</th>
-                            <th>Avg Booking Revenue</th>
-                            <th>Utilization</th>
-                            <th>Revenue Share</th>
-                        </tr>
-                    </thead>
-                    <tbody id="modalityTableBody">
-                    </tbody>
-                </table>
-            </div>
-        </div>
     </div>
 
     <!-- Chart.js -->
@@ -1020,16 +1037,8 @@
             document.getElementById('dateRangeText').textContent = `${data.date_range.start} to ${data.date_range.end}`;
 
             // Update space utilization
-            const space1 = data.space_utilization['Palace Seven'];
-            const space2 = data.space_utilization['Palace Eight'];
-
-            document.getElementById('palace1Util').textContent = space1.utilization + '%';
-            document.getElementById('palace1Details').textContent = `${space1.total_bookings} bookings • ${space1.booked_hours} hrs`;
-            document.getElementById('palace2Util').textContent = space2.utilization + '%';
-            document.getElementById('palace2Details').textContent = `${space2.total_bookings} bookings • ${space2.booked_hours} hrs`;
-
-            // Update space modality breakdown table
-            updateSpaceModalityTable(space1, space2);
+            // Update location tabs and content
+            updateLocationTabs();
 
             // Update daily revenue with pagination
             currentPage = 0;
@@ -1046,9 +1055,6 @@
             revenueDistChart.data.labels = modalities;
             revenueDistChart.data.datasets[0].data = modalityData.map(d => d.revenue);
             revenueDistChart.update();
-
-            // Update modality table
-            updateModalityTable(data.modality_performance);
         }
 
         function updateRevenueChart() {
@@ -1109,65 +1115,74 @@
             updateRevenueChart();
         }
 
-        function updateModalityTable(modalityData) {
-            const tbody = document.getElementById('modalityTableBody');
-            tbody.innerHTML = '';
+        // Location tabs state
+        let currentLocation = null;
+        let locationData = {};
 
-            for (const [modality, data] of Object.entries(modalityData)) {
-                const row = document.createElement('tr');
-                const badgeClass = modality.toLowerCase().replace(' ', '');
-                
-                row.innerHTML = `
-                    <td><span class="modality-badge ${badgeClass}">${modality}</span></td>
-                    <td>${data.bookings}</td>
-                    <td>${data.hours}</td>
-                    <td>HKD ${data.revenue.toLocaleString()}</td>
-                    <td><strong>HKD ${data.avg_booking_revenue.toLocaleString()}</strong></td>
-                    <td>
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <div class="progress-bar-custom">
-                                <div class="fill" style="width: ${data.utilization}%; background: ${modalityColors[modality]};"></div>
-                            </div>
-                            <span>${data.utilization}%</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <div class="progress-bar-custom">
-                                <div class="fill" style="width: ${data.revenue_share}%; background: ${modalityColors[modality]};"></div>
-                            </div>
-                            <span>${data.revenue_share}%</span>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(row);
+        function updateLocationTabs() {
+            if (!dashboardData) return;
+            
+            const tabsContainer = document.getElementById('locationTabs');
+            tabsContainer.innerHTML = '';
+            
+            const locations = Object.keys(dashboardData.space_utilization);
+            locationData = dashboardData.space_utilization;
+            
+            locations.forEach((location, index) => {
+                const tab = document.createElement('button');
+                tab.className = 'location-tab' + (index === 0 ? ' active' : '');
+                tab.textContent = location;
+                tab.onclick = () => selectLocation(location);
+                tabsContainer.appendChild(tab);
+            });
+            
+            // Select first location by default
+            if (locations.length > 0) {
+                currentLocation = locations[0];
+                updateLocationContent(currentLocation);
             }
         }
 
-        function updateSpaceModalityTable(space1, space2) {
-            const tbody = document.getElementById('spaceModalityTableBody');
-            tbody.innerHTML = '';
+        function selectLocation(location) {
+            currentLocation = location;
+            
+            // Update tab active state
+            document.querySelectorAll('.location-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.textContent === location);
+            });
+            
+            updateLocationContent(location);
+        }
 
+        function updateLocationContent(location) {
+            const data = locationData[location];
+            if (!data) return;
+            
+            // Update header
+            document.getElementById('activeSpaceUtil').textContent = data.utilization + '%';
+            document.getElementById('activeSpaceDetails').textContent = 
+                `${data.total_bookings} bookings • ${data.booked_hours} hrs • HKD ${data.revenue.toLocaleString()} revenue`;
+            
+            // Update table
+            const tbody = document.getElementById('locationModalityTableBody');
+            tbody.innerHTML = '';
+            
             const modalities = ['Strength', 'Pilates', 'Yoga', 'Physiotherapy', 'Hyrox'];
             
             for (const modality of modalities) {
-                const p1 = space1.modality_breakdown[modality] || { bookings: 0, hours: 0, avg_booking_revenue: 0, upcoming_bookings: 0, projected_revenue: 0 };
-                const p2 = space2.modality_breakdown[modality] || { bookings: 0, hours: 0, avg_booking_revenue: 0, upcoming_bookings: 0, projected_revenue: 0 };
+                const m = data.modality_breakdown[modality] || { 
+                    bookings: 0, hours: 0, avg_booking_revenue: 0, upcoming_bookings: 0, projected_revenue: 0 
+                };
                 const badgeClass = modality.toLowerCase().replace(' ', '');
                 
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td><span class="modality-badge ${badgeClass}">${modality}</span></td>
-                    <td style="background: rgba(26, 32, 44, 0.02);">${p1.bookings}</td>
-                    <td style="background: rgba(26, 32, 44, 0.02);">${p1.hours}</td>
-                    <td style="background: rgba(26, 32, 44, 0.02);">HKD ${p1.avg_booking_revenue.toLocaleString()}</td>
-                    <td style="background: rgba(251, 191, 36, 0.1); color: #b45309; font-weight: 600;">${p1.upcoming_bookings}</td>
-                    <td style="background: rgba(251, 191, 36, 0.1); color: #b45309; font-weight: 600;">HKD ${p1.projected_revenue.toLocaleString()}</td>
-                    <td style="background: rgba(203, 166, 104, 0.05);">${p2.bookings}</td>
-                    <td style="background: rgba(203, 166, 104, 0.05);">${p2.hours}</td>
-                    <td style="background: rgba(203, 166, 104, 0.05);">HKD ${p2.avg_booking_revenue.toLocaleString()}</td>
-                    <td style="background: rgba(251, 191, 36, 0.1); color: #b45309; font-weight: 600;">${p2.upcoming_bookings}</td>
-                    <td style="background: rgba(251, 191, 36, 0.1); color: #b45309; font-weight: 600;">HKD ${p2.projected_revenue.toLocaleString()}</td>
+                    <td>${m.bookings}</td>
+                    <td>${m.hours}</td>
+                    <td>HKD ${m.avg_booking_revenue.toLocaleString()}</td>
+                    <td style="background: rgba(251, 191, 36, 0.1); color: #b45309; font-weight: 600;">${m.upcoming_bookings}</td>
+                    <td style="background: rgba(251, 191, 36, 0.1); color: #b45309; font-weight: 600;">HKD ${m.projected_revenue.toLocaleString()}</td>
                 `;
                 tbody.appendChild(row);
             }
