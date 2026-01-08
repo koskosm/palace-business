@@ -429,14 +429,18 @@ def get_dashboard_data(start_date: date, end_date: date) -> dict:
         # =====================================================================
         # Summary Stats
         # =====================================================================
+        total_hours = total_booked_minutes / 60
+        avg_rate_per_hour = round(total_revenue / total_hours, 2) if total_hours > 0 else 0
+        
         summary = {
             "total_bookings": len(bookings),
             "total_revenue": round(total_revenue, 2),
-            "total_hours": round(total_booked_minutes / 60, 1),
+            "total_hours": round(total_hours, 1),
             "avg_daily_revenue": round(total_revenue / days_in_range, 2) if days_in_range > 0 else 0,
             "avg_daily_bookings": round(len(bookings) / days_in_range, 1) if days_in_range > 0 else 0,
             "upcoming_bookings": upcoming_bookings,
-            "completed_bookings": completed_bookings
+            "completed_bookings": completed_bookings,
+            "avg_rate_per_hour": avg_rate_per_hour
         }
         
         return {

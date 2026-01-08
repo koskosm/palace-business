@@ -187,6 +187,7 @@
             background: white;
             border-radius: 12px;
             padding: 1.5rem;
+            margin-top: 24px;
             margin-bottom: 2rem;
             box-shadow: 0 1px 3px rgba(26, 32, 44, 0.1);
             display: flex;
@@ -768,9 +769,9 @@
                 <div class="subvalue">booked hours</div>
             </div>
             <div class="summary-card info">
-                <h3>Date Range</h3>
-                <div class="value" id="daysCount">0</div>
-                <div class="subvalue" id="dateRangeText">days</div>
+                <h3>Avg Rate / Hour</h3>
+                <div class="value" id="avgRatePerHour">HKD 0</div>
+                <div class="subvalue">per booked hour</div>
             </div>
         </div>
 
@@ -1033,8 +1034,7 @@
             document.getElementById('upcomingBookings').textContent = data.summary.upcoming_bookings.toLocaleString();
             document.getElementById('completedBookings').textContent = data.summary.completed_bookings.toLocaleString();
             document.getElementById('totalHours').textContent = data.summary.total_hours;
-            document.getElementById('daysCount').textContent = data.date_range.days;
-            document.getElementById('dateRangeText').textContent = `${data.date_range.start} to ${data.date_range.end}`;
+            document.getElementById('avgRatePerHour').textContent = 'HKD ' + data.summary.avg_rate_per_hour.toLocaleString();
 
             // Update space utilization
             // Update location tabs and content
