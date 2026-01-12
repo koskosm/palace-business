@@ -617,6 +617,75 @@
             color: #6b7280;
         }
 
+        .booking-type-filter {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .booking-type-filter .filter-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #6b7280;
+            margin-right: 0.25rem;
+        }
+
+        .booking-type-filter .type-filter-btn {
+            background: rgba(26, 32, 44, 0.05);
+            border: 1px solid rgba(26, 32, 44, 0.15);
+        }
+
+        .type-filter-btn {
+            padding: 0.4rem 0.75rem;
+            background: transparent;
+            color: var(--palace-primary);
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .type-filter-btn:hover {
+            background: rgba(26, 32, 44, 0.1);
+        }
+
+        .type-filter-btn.active {
+            background: var(--palace-primary);
+            color: var(--palace-nav-text);
+        }
+
+        .modality-stats-summary {
+            display: flex;
+            gap: 2rem;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(26, 32, 44, 0.05) 0%, rgba(203, 166, 104, 0.1) 100%);
+            border-radius: 8px;
+        }
+
+        .modality-stats-summary .stat-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .modality-stats-summary .stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #6b7280;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .modality-stats-summary .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--palace-primary);
+        }
+
         @media (max-width: 992px) {
             .navbar-vertical {
                 width: 100% !important;
@@ -832,6 +901,23 @@
             <!-- Modality Utilization -->
             <div class="chart-card">
                 <h2><i class="fa fa-chart-pie"></i>Modality Booking Performance</h2>
+                <div class="booking-type-filter" id="modalityTypeFilter">
+                    <span class="filter-label">Booking Type:</span>
+                    <button class="type-filter-btn active" data-type="all" onclick="setBookingTypeFilter('all')">All</button>
+                    <button class="type-filter-btn" data-type="1-on-1" onclick="setBookingTypeFilter('1-on-1')">1-on-1</button>
+                    <button class="type-filter-btn" data-type="2-on-1" onclick="setBookingTypeFilter('2-on-1')">2-on-1</button>
+                    <button class="type-filter-btn" data-type="3-on-1" onclick="setBookingTypeFilter('3-on-1')">3-on-1</button>
+                </div>
+                <div class="modality-stats-summary" id="modalityStatsSummary">
+                    <div class="stat-item">
+                        <span class="stat-label">Total Hours</span>
+                        <span class="stat-value" id="modalityTotalHours">0 hrs</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Utilization Rate</span>
+                        <span class="stat-value" id="modalityUtilRate">0%</span>
+                    </div>
+                </div>
                 <div class="chart-container">
                     <canvas id="modalityChart"></canvas>
                 </div>
@@ -840,6 +926,23 @@
             <!-- Revenue Distribution -->
             <div class="chart-card">
                 <h2><i class="fa fa-coins"></i>Revenue Distribution by Modality</h2>
+                <div class="booking-type-filter" id="revenueTypeFilter">
+                    <span class="filter-label">Booking Type:</span>
+                    <button class="type-filter-btn active" data-type="all" onclick="setRevenueTypeFilter('all')">All</button>
+                    <button class="type-filter-btn" data-type="1-on-1" onclick="setRevenueTypeFilter('1-on-1')">1-on-1</button>
+                    <button class="type-filter-btn" data-type="2-on-1" onclick="setRevenueTypeFilter('2-on-1')">2-on-1</button>
+                    <button class="type-filter-btn" data-type="3-on-1" onclick="setRevenueTypeFilter('3-on-1')">3-on-1</button>
+                </div>
+                <div class="modality-stats-summary">
+                    <div class="stat-item">
+                        <span class="stat-label">Total Revenue</span>
+                        <span class="stat-value" id="revDistTotalRevenue">HKD 0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Avg Rate</span>
+                        <span class="stat-value" id="revDistAvgRate">HKD 0/hr</span>
+                    </div>
+                </div>
                 <div class="chart-container">
                     <canvas id="revenueDistChart"></canvas>
                 </div>
@@ -858,6 +961,8 @@
         let currentPage = 0;
         const itemsPerPage = 7;
         let revenueViewMode = 'total'; // 'total' or 'modality'
+        let bookingTypeFilter = 'all'; // 'all', '1-on-1', '2-on-1', '3-on-1'
+        let revenueTypeFilter = 'all'; // 'all', '1-on-1', '2-on-1', '3-on-1'
 
         // Color palette
         const colors = {
@@ -968,7 +1073,7 @@
                 }
             });
 
-            // Modality Chart (Doughnut)
+            // Modality Chart (Doughnut) - shows hours with utilization in tooltip
             const modalityCtx = document.getElementById('modalityChart').getContext('2d');
             modalityChart = new Chart(modalityCtx, {
                 type: 'doughnut',
@@ -986,7 +1091,35 @@
                     plugins: {
                         legend: {
                             position: 'right',
-                            labels: { padding: 15 }
+                            labels: { 
+                                padding: 15,
+                                generateLabels: function(chart) {
+                                    const data = chart.data;
+                                    if (data.labels.length && data.datasets.length) {
+                                        return data.labels.map((label, i) => {
+                                            const dataset = data.datasets[0];
+                                            const value = dataset.data[i];
+                                            const utilization = dataset.utilizations ? dataset.utilizations[i] : 0;
+                                            return {
+                                                text: `${label}: ${value} hrs (${utilization}%)`,
+                                                fillStyle: dataset.backgroundColor[i],
+                                                hidden: false,
+                                                index: i
+                                            };
+                                        });
+                                    }
+                                    return [];
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const hours = context.raw;
+                                    const utilization = context.dataset.utilizations ? context.dataset.utilizations[context.dataIndex] : 0;
+                                    return `${context.label}: ${hours} hrs (${utilization}% utilization)`;
+                                }
+                            }
                         }
                     }
                 }
@@ -1010,7 +1143,16 @@
                     maintainAspectRatio: false,
                     indexAxis: 'y',
                     plugins: {
-                        legend: { display: false }
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const revenue = context.raw;
+                                    const avgRate = context.dataset.avgRates ? context.dataset.avgRates[context.dataIndex] : 0;
+                                    return `HKD ${revenue.toLocaleString()} (Avg: HKD ${avgRate}/hr)`;
+                                }
+                            }
+                        }
                     },
                     scales: {
                         x: {
@@ -1045,16 +1187,122 @@
             updateRevenueChart();
 
             // Update modality charts
-            const modalities = Object.keys(data.modality_performance);
-            const modalityData = modalities.map(m => data.modality_performance[m]);
+            updateModalityChart();
+            updateRevenueDistChart();
+        }
 
-            modalityChart.data.labels = modalities;
-            modalityChart.data.datasets[0].data = modalityData.map(d => d.utilization);
-            modalityChart.update();
+        function setBookingTypeFilter(type) {
+            bookingTypeFilter = type;
+            
+            // Update button states (only in the modality chart filter)
+            document.querySelectorAll('#modalityTypeFilter .type-filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.type === type);
+            });
+            
+            updateModalityChart();
+        }
 
+        function setRevenueTypeFilter(type) {
+            revenueTypeFilter = type;
+            
+            // Update button states (only in the revenue chart filter)
+            document.querySelectorAll('#revenueTypeFilter .type-filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.type === type);
+            });
+            
+            updateRevenueDistChart();
+        }
+
+        function updateRevenueDistChart() {
+            if (!dashboardData) return;
+            
+            const modalities = Object.keys(dashboardData.modality_performance);
+            let totalRevenue = 0;
+            let totalHours = 0;
+            
+            const revenueData = modalities.map(m => {
+                const modalityPerf = dashboardData.modality_performance[m];
+                if (revenueTypeFilter === 'all') {
+                    return modalityPerf.revenue;
+                } else {
+                    const byType = modalityPerf.by_booking_type[revenueTypeFilter];
+                    return byType ? byType.revenue : 0;
+                }
+            });
+            
+            const hoursData = modalities.map(m => {
+                const modalityPerf = dashboardData.modality_performance[m];
+                if (revenueTypeFilter === 'all') {
+                    return modalityPerf.hours;
+                } else {
+                    const byType = modalityPerf.by_booking_type[revenueTypeFilter];
+                    return byType ? byType.hours : 0;
+                }
+            });
+            
+            // Calculate avg rate per modality (revenue / hours)
+            const avgRateData = modalities.map((m, i) => {
+                const revenue = revenueData[i];
+                const hours = hoursData[i];
+                return hours > 0 ? Math.round(revenue / hours) : 0;
+            });
+            
+            // Calculate totals
+            revenueData.forEach(r => totalRevenue += r);
+            hoursData.forEach(h => totalHours += h);
+            const overallAvgRate = totalHours > 0 ? Math.round(totalRevenue / totalHours) : 0;
+            
+            // Update summary stats
+            document.getElementById('revDistTotalRevenue').textContent = 'HKD ' + totalRevenue.toLocaleString();
+            document.getElementById('revDistAvgRate').textContent = 'HKD ' + overallAvgRate.toLocaleString() + '/hr';
+            
+            // Update chart
             revenueDistChart.data.labels = modalities;
-            revenueDistChart.data.datasets[0].data = modalityData.map(d => d.revenue);
+            revenueDistChart.data.datasets[0].data = revenueData;
+            revenueDistChart.data.datasets[0].avgRates = avgRateData;
             revenueDistChart.update();
+        }
+
+        function updateModalityChart() {
+            if (!dashboardData) return;
+            
+            const modalities = Object.keys(dashboardData.modality_performance);
+            let totalHours = 0;
+            let totalUtilization = 0;
+            
+            const hoursData = modalities.map(m => {
+                const modalityPerf = dashboardData.modality_performance[m];
+                if (bookingTypeFilter === 'all') {
+                    return modalityPerf.hours;
+                } else {
+                    const byType = modalityPerf.by_booking_type[bookingTypeFilter];
+                    return byType ? byType.hours : 0;
+                }
+            });
+            
+            const utilizationData = modalities.map(m => {
+                const modalityPerf = dashboardData.modality_performance[m];
+                if (bookingTypeFilter === 'all') {
+                    return modalityPerf.utilization;
+                } else {
+                    const byType = modalityPerf.by_booking_type[bookingTypeFilter];
+                    return byType ? byType.utilization : 0;
+                }
+            });
+            
+            // Calculate totals
+            hoursData.forEach(h => totalHours += h);
+            utilizationData.forEach(u => totalUtilization += u);
+            
+            // Update summary stats
+            document.getElementById('modalityTotalHours').textContent = totalHours.toFixed(1) + ' hrs';
+            document.getElementById('modalityUtilRate').textContent = totalUtilization.toFixed(1) + '%';
+            
+            // Update chart
+            modalityChart.data.labels = modalities;
+            modalityChart.data.datasets[0].data = hoursData;
+            modalityChart.data.datasets[0].utilizations = utilizationData;
+            modalityChart.update();
         }
 
         function updateRevenueChart() {

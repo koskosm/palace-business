@@ -83,6 +83,12 @@ class Space(str, Enum):
     PALACE_EIGHT = "Palace Eight"
 
 
+class BookingType(str, Enum):
+    ONE_ON_ONE = "1-on-1"
+    TWO_ON_ONE = "2-on-1"
+    THREE_ON_ONE = "3-on-1"
+
+
 class Booking(Base):
     __tablename__ = "bookings"
 
@@ -95,6 +101,7 @@ class Booking(Base):
     # Service & Space
     service: Mapped[ServiceModality] = mapped_column(SQLEnum(ServiceModality), nullable=False)
     space: Mapped[Space] = mapped_column(SQLEnum(Space), nullable=False)
+    booking_type: Mapped[BookingType] = mapped_column(SQLEnum(BookingType), nullable=False, default=BookingType.ONE_ON_ONE)
     
     # Date & Time
     booking_date: Mapped[date] = mapped_column(Date, nullable=False)
@@ -197,11 +204,21 @@ def seed_sample_data():
                 rate = service_rates[service]
                 revenue = (rate * duration / 60) if status != BookingStatus.CANCELLED else 0
                 
+                # Booking type distribution: 60% 1-on-1, 30% 2-on-1, 10% 3-on-1
+                booking_type_rand = random.random()
+                if booking_type_rand < 0.6:
+                    booking_type = BookingType.ONE_ON_ONE
+                elif booking_type_rand < 0.9:
+                    booking_type = BookingType.TWO_ON_ONE
+                else:
+                    booking_type = BookingType.THREE_ON_ONE
+                
                 bookings.append(Booking(
                     customer_name=customer[0],
                     customer_phone=customer[1],
                     service=service,
                     space=space,
+                    booking_type=booking_type,
                     booking_date=booking_date,
                     time_from=time_from,
                     time_to=time_to,
@@ -239,11 +256,21 @@ def seed_sample_data():
                         rate = service_rates[service]
                         revenue = rate * duration / 60
                         
+                        # Booking type distribution
+                        booking_type_rand = random.random()
+                        if booking_type_rand < 0.6:
+                            booking_type = BookingType.ONE_ON_ONE
+                        elif booking_type_rand < 0.9:
+                            booking_type = BookingType.TWO_ON_ONE
+                        else:
+                            booking_type = BookingType.THREE_ON_ONE
+                        
                         bookings.append(Booking(
                             customer_name=customer[0],
                             customer_phone=customer[1],
                             service=service,
                             space=space,
+                            booking_type=booking_type,
                             booking_date=today,
                             time_from=time_from,
                             time_to=time_to,
@@ -275,11 +302,21 @@ def seed_sample_data():
                 rate = service_rates[service]
                 revenue = rate * duration / 60
                 
+                # Booking type distribution
+                booking_type_rand = random.random()
+                if booking_type_rand < 0.6:
+                    booking_type = BookingType.ONE_ON_ONE
+                elif booking_type_rand < 0.9:
+                    booking_type = BookingType.TWO_ON_ONE
+                else:
+                    booking_type = BookingType.THREE_ON_ONE
+                
                 bookings.append(Booking(
                     customer_name=customer[0],
                     customer_phone=customer[1],
                     service=service,
                     space=space,
+                    booking_type=booking_type,
                     booking_date=booking_date,
                     time_from=time_from,
                     time_to=time_to,
@@ -383,11 +420,14 @@ def get_dashboard_data(start_date: date, end_date: date) -> dict:
             current_date += timedelta(days=1)
         
         # =====================================================================
-        # Modality Performance
+        # Modality Performance (with booking type breakdown)
         # =====================================================================
         modality_data = {}
         total_revenue = sum(b.revenue for b in bookings)
         total_booked_minutes = sum(b.duration_minutes for b in bookings)
+        
+        # Total available capacity (2 spaces * operating hours * days)
+        total_capacity_minutes = DAILY_OPERATING_MINUTES * days_in_range * 2  # 2 spaces
         
         for service in ServiceModality:
             service_bookings = [b for b in bookings if b.service == service]
@@ -401,14 +441,36 @@ def get_dashboard_data(start_date: date, end_date: date) -> dict:
             revenue_share = (service_revenue / total_revenue * 100) if total_revenue > 0 else 0
             # Average booking revenue
             avg_booking_revenue = round(service_revenue / booking_count, 2) if booking_count > 0 else 0
+            # Capacity utilization (percentage of total available capacity)
+            capacity_utilization = (service_minutes / total_capacity_minutes * 100) if total_capacity_minutes > 0 else 0
+            
+            # Breakdown by booking type
+            booking_type_breakdown = {}
+            for bt in BookingType:
+                bt_bookings = [b for b in service_bookings if b.booking_type == bt]
+                bt_minutes = sum(b.duration_minutes for b in bt_bookings)
+                bt_revenue = sum(b.revenue for b in bt_bookings)
+                bt_count = len(bt_bookings)
+                bt_utilization = (bt_minutes / total_booked_minutes * 100) if total_booked_minutes > 0 else 0
+                bt_capacity_utilization = (bt_minutes / total_capacity_minutes * 100) if total_capacity_minutes > 0 else 0
+                
+                booking_type_breakdown[bt.value] = {
+                    "bookings": bt_count,
+                    "hours": round(bt_minutes / 60, 1),
+                    "revenue": round(bt_revenue, 2),
+                    "utilization": round(bt_utilization, 1),
+                    "capacity_utilization": round(bt_capacity_utilization, 1)
+                }
             
             modality_data[service.value] = {
                 "bookings": booking_count,
                 "hours": round(service_minutes / 60, 1),
                 "revenue": round(service_revenue, 2),
                 "utilization": round(utilization, 1),
+                "capacity_utilization": round(capacity_utilization, 1),
                 "revenue_share": round(revenue_share, 1),
-                "avg_booking_revenue": avg_booking_revenue
+                "avg_booking_revenue": avg_booking_revenue,
+                "by_booking_type": booking_type_breakdown
             }
         
         # =====================================================================
@@ -486,6 +548,7 @@ class BookingView(ModelView):
         StringField("customer_name", label="Customer Name"),
         StringField("customer_phone", label="Phone No."),
         EnumField("service", label="Service (Modality)", enum=ServiceModality),
+        EnumField("booking_type", label="Booking Type", enum=BookingType),
         EnumField("space", label="Space", enum=Space),
         DateField("booking_date", label="Date"),
         TimeField("time_from", label="Time From"),
@@ -502,6 +565,7 @@ class BookingView(ModelView):
         "customer_name": "Customer Name",
         "customer_phone": "Phone No.",
         "service": "Service",
+        "booking_type": "Type",
         "space": "Space",
         "booking_date": "Date",
         "time_from": "From",
@@ -517,14 +581,15 @@ class BookingView(ModelView):
     
     # Searchable fields - appears in Filter dropdown
     # Text search box works for: customer_name, customer_phone
-    # Filter button works for all: service, status, booking_date
-    searchable_fields = ["customer_name", "customer_phone", "service", "status", "booking_date"]
+    # Filter button works for all: service, status, booking_date, booking_type
+    searchable_fields = ["customer_name", "customer_phone", "service", "booking_type", "status", "booking_date"]
     
     # Sortable fields
     sortable_fields = [
         "id",
         "customer_name",
         "service",
+        "booking_type",
         "space",
         "booking_date",
         "time_from",
