@@ -364,7 +364,7 @@ def get_dashboard_data(start_date: date, end_date: date) -> dict:
             utilization = (total_booked_minutes / max_capacity_minutes * 100) if max_capacity_minutes > 0 else 0
             space_revenue = sum(b.revenue for b in space_bookings)
             
-            # Modality breakdown for this space
+            # Modality breakdown for this space (with booking type breakdown)
             modality_breakdown = {}
             for service in ServiceModality:
                 service_space_bookings = [b for b in space_bookings if b.service == service]
@@ -378,13 +378,50 @@ def get_dashboard_data(start_date: date, end_date: date) -> dict:
                 upcoming_count = len(upcoming_service_bookings)
                 projected_revenue = round(sum(b.revenue for b in upcoming_service_bookings), 2)
                 
+                # Booking type breakdown for this modality/space
+                by_booking_type = {}
+                for bt in BookingType:
+                    bt_bookings = [b for b in service_space_bookings if b.booking_type == bt]
+                    bt_minutes = sum(b.duration_minutes for b in bt_bookings)
+                    bt_revenue = sum(b.revenue for b in bt_bookings)
+                    bt_count = len(bt_bookings)
+                    bt_avg_revenue = round(bt_revenue / bt_count, 2) if bt_count > 0 else 0
+                    bt_upcoming = [b for b in bt_bookings if b.status == BookingStatus.UPCOMING]
+                    bt_upcoming_count = len(bt_upcoming)
+                    bt_projected = round(sum(b.revenue for b in bt_upcoming), 2)
+                    
+                    by_booking_type[bt.value] = {
+                        "bookings": bt_count,
+                        "hours": round(bt_minutes / 60, 1),
+                        "revenue": round(bt_revenue, 2),
+                        "avg_booking_revenue": bt_avg_revenue,
+                        "upcoming_bookings": bt_upcoming_count,
+                        "projected_revenue": bt_projected
+                    }
+                
                 modality_breakdown[service.value] = {
                     "bookings": booking_count,
                     "hours": round(service_minutes / 60, 1),
                     "revenue": round(service_revenue, 2),
                     "avg_booking_revenue": avg_revenue,
                     "upcoming_bookings": upcoming_count,
-                    "projected_revenue": projected_revenue
+                    "projected_revenue": projected_revenue,
+                    "by_booking_type": by_booking_type
+                }
+            
+            # Booking type breakdown for space totals
+            space_by_booking_type = {}
+            for bt in BookingType:
+                bt_space_bookings = [b for b in space_bookings if b.booking_type == bt]
+                bt_minutes = sum(b.duration_minutes for b in bt_space_bookings)
+                bt_revenue = sum(b.revenue for b in bt_space_bookings)
+                bt_utilization = (bt_minutes / max_capacity_minutes * 100) if max_capacity_minutes > 0 else 0
+                
+                space_by_booking_type[bt.value] = {
+                    "total_bookings": len(bt_space_bookings),
+                    "booked_hours": round(bt_minutes / 60, 1),
+                    "revenue": round(bt_revenue, 2),
+                    "utilization": round(bt_utilization, 1)
                 }
             
             space_data[space.value] = {
@@ -392,7 +429,8 @@ def get_dashboard_data(start_date: date, end_date: date) -> dict:
                 "booked_hours": round(total_booked_minutes / 60, 1),
                 "total_bookings": len(space_bookings),
                 "revenue": round(space_revenue, 2),
-                "modality_breakdown": modality_breakdown
+                "modality_breakdown": modality_breakdown,
+                "by_booking_type": space_by_booking_type
             }
         
         # =====================================================================
@@ -403,6 +441,7 @@ def get_dashboard_data(start_date: date, end_date: date) -> dict:
         while current_date <= end_date:
             day_bookings = [b for b in bookings if b.booking_date == current_date]
             day_revenue = sum(b.revenue for b in day_bookings)
+            day_minutes = sum(b.duration_minutes for b in day_bookings)
             
             # Revenue by modality for this day
             modality_revenue = {}
@@ -414,6 +453,7 @@ def get_dashboard_data(start_date: date, end_date: date) -> dict:
                 "date": current_date.strftime("%Y-%m-%d"),
                 "day": current_date.strftime("%a"),
                 "revenue": round(day_revenue, 2),
+                "hours": round(day_minutes / 60, 1),
                 "bookings": len(day_bookings),
                 "by_modality": modality_revenue
             })
